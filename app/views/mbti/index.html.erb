@@ -1,0 +1,8 @@
+<h1>MBTIで曲を探す</h1>
+<p>自分のMBTIタイプを選んでください。</p>
+
+<div>
+  <% @codes.each do |c| %>
+    <%= link_to c, mbti_show_path(c) %>
+  <% end %>
+</div>

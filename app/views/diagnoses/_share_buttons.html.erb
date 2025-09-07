@@ -1,0 +1,45 @@
+<% share_url  = local_assigns[:url] %>
+<% raw_title  = local_assigns[:title].to_s %>
+<% title_for_share = (raw_title =~ /\A\s*タイプ/i) ? "診断結果" : raw_title %>
+<% share_text = "TuneMatchで「#{title_for_share}」の結果でした。#{local_assigns[:summary].to_s.truncate(60)}" %>
+
+<div>
+  <!-- X(Twitter) -->
+  <a href="https://twitter.com/intent/tweet?text=<%= ERB::Util.url_encode(share_text) %>&url=<%= ERB::Util.url_encode(share_url) %>"
+     target="_blank" rel="noopener">Xでシェア</a>
+
+  <!-- LINE -->
+  <a href="https://social-plugins.line.me/lineit/share?url=<%= ERB::Util.url_encode(share_url) %>"
+     target="_blank" rel="noopener">LINEでシェア</a>
+
+  <!-- コピー -->
+  <button id="copy-link">リンクをコピー</button>
+
+  <!-- Web Share API -->
+  <button id="web-share">端末で共有</button>
+</div>
+
+<script>
+  document.getElementById("copy-link")?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText("<%= j share_url %>");
+      alert("リンクをコピーしました！");
+    } catch(e) {
+      alert("コピーに失敗しました");
+    }
+  });
+
+  (function(){
+    const btn = document.getElementById("web-share");
+    if(navigator.share && btn){
+      btn.classList.remove("hidden");
+      btn.addEventListener("click", () => {
+        navigator.share({
+          title: "<%= j local_assigns[:title] %>",
+          text: "<%= j share_text %>",
+          url: "<%= j share_url %>"
+        });
+      });
+    }
+  })();
+</script>

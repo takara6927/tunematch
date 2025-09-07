@@ -1,0 +1,36 @@
+<h1><%= @code %> におすすめの曲</h1>
+<%= link_to "← MBTI一覧へ", mbti_index_path%>
+
+<% if @picks.blank? %>
+  <p>まだ登録がありません。管理者はseedを追加してください。</p>
+<% else %>
+  <div>
+    <% @picks.each do |p| %>
+      <div>
+        <div><%= p.artist %> — <%= p.title %></div>
+
+        <% if p.reason.present? %>
+          <p><%= p.reason %></p>
+        <% end %>
+
+        <div>
+          <% if (embed = youtube_embed_url(p.youtube_url)) %>
+            <div>
+              <iframe
+                src="<%= embed %>"
+                title="<%= "#{p.artist} - #{p.title}" %>"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                loading="lazy"></iframe>
+            </div>
+          <% else %>
+            <a href="<%= p.youtube_url %>" target="_blank" rel="noopener" class="underline">YouTubeで聴く</a>
+          <% end %>
+        </div>
+        <!-- ★ ここまで -->
+      </div>
+    <% end %>
+  </div>
+<% end %>

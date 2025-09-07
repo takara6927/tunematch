@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) : "TuneMatch" %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <%= yield :head %>
+  </head>
+
+  <body>
+    <div id="bg-ornaments" class="bg-ornaments" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="container nav">
+        <%= link_to root_path, class: "brand" do %>
+          <span class="brand__logo"></span>
+          <span class="brand-text">TuneMatch</span>
+        <% end %>
+
+        <nav class="nav-desktop">
+          <%= link_to "診断を始める", diagnoses_start_path, class:"btn btn-primary" %>
+          <%= link_to "投稿一覧",       tweets_path,         class:"btn btn-outline" %>
+          <%= link_to "MBTIで探す",    mbti_index_path,     class:"btn btn-ghost" %>
+          <%= link_to "使い方",         "/pages/about",      class:"btn btn-ghost" %>
+          <% if user_signed_in? %>
+            <%= link_to "マイページ", user_path(current_user.id), class:"btn btn-ghost" %>
+            <%= button_to "ログアウト", destroy_user_session_path, method: :delete, class:"btn btn-outline" %>
+          <% else %>
+            <%= link_to "新規登録", new_user_registration_path, class:"btn btn-primary" %>
+            <%= link_to "ログイン", new_user_session_path,      class:"btn btn-outline" %>
+          <% end %>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <%= yield %>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <span>© <%= Time.current.year %> TuneMatch</span>
+          <span>Made with <span title="teal">💚</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        const COUNT   = 128;                   
+        const SHAPES  = ["ring","plus","tri","diamond","star","note"];
+        const MIN_AMP = 8;                      
+        const MAX_AMP = 18;
+        const MIN_V   = 4;                     
+        const MAX_V   = 10;
+
+        const root = document.getElementById("bg-ornaments");
+        const rnd = (a,b) => a + Math.random()*(b-a);
+        const pick = arr => arr[(Math.random()*arr.length)|0];
+
+        const items = [];
+        for (let i=0; i<COUNT; i++){
+          const el = document.createElement("span");
+          el.className = "o " + pick(SHAPES);
+
+          el.style.left = rnd(2, 98) + "%";
+          el.style.top  = rnd(2, 98) + "%";
+
+          const ampX = rnd(MIN_AMP, MAX_AMP);
+          const ampY = rnd(MIN_AMP, MAX_AMP);
+          let dx = rnd(-ampX, ampX),  dy = rnd(-ampY, ampY);
+          let vx = (Math.random()<.5?-1:1) * rnd(MIN_V, MAX_V);
+          let vy = (Math.random()<.5?-1:1) * rnd(MIN_V, MAX_V);
+
+          items.push({el, ampX, ampY, dx, dy, vx, vy});
+          root.appendChild(el);
+        }
+
+        let last = performance.now();
+        function tick(now){
+          const dt = Math.min(0.05, (now-last)/1000);
+          last = now;
+
+          for (const o of items){
+            o.dx += o.vx * dt;
+            o.dy += o.vy * dt;
+
+            if (o.dx >  o.ampX || o.dx < -o.ampX) o.vx *= -1;
+            if (o.dy >  o.ampY || o.dy < -o.ampY) o.vy *= -1;
+
+            o.el.style.transform = `translate3d(${o.dx.toFixed(2)}px, ${o.dy.toFixed(2)}px, 0)`;
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })();
+    </script>
+  </body>
+</html>

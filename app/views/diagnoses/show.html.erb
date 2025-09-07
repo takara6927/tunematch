@@ -1,0 +1,61 @@
+<h2>診断結果</h2>
+
+<p><%= @diagnosis.result_summary %></p>
+
+<h3>おすすめ曲</h3>
+
+<% (@diagnosis.tracks || []).each do |t| %>
+  <div>
+    <div><%= t["title"] %> — <%= t["artist"] %></div>
+
+    <% if (embed = youtube_embed_url(t["youtube_url"])) %>
+      <div class="yt-wrap">
+        <iframe
+          src="<%= embed %>"
+          title="<%= t["title"] %>"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy"></iframe>
+      </div>
+    <% else %>
+      <a href="<%= t["youtube_url"] %>" target="_blank" rel="noopener">YouTubeで見る</a>
+    <% end %>
+  </div>
+<% end %>
+
+<%= render "share_buttons",
+      url: request.original_url,
+      title: "診断結果",
+      summary: @diagnosis.result_summary %>
+
+<div>
+  <%= link_to "履歴一覧へ戻る", diagnoses_path%>
+</div>
+
+<style>
+
+  .yt-wrap{
+    position: relative;
+    width: 100%;
+    max-width: 560px;   
+    margin: 12px auto; 
+    aspect-ratio: 16 / 9; 
+    overflow: hidden;
+    border-radius: 12px;
+  }
+  .yt-wrap iframe{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+
+  @media (min-width: 1024px){
+    .yt-wrap{ max-width: 640px; }  
+  }
+</style>
+
+

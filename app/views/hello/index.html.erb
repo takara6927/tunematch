@@ -1,0 +1,77 @@
+<section class="section">
+  <div class="container">
+    <div class="surface surface--intro">
+      <div class="intro-head">
+        <h1 class="hero__title">いまの気分に合う音楽を、かんたん診断で。</h1>
+        <p class="hero__lead">20問のはい/いいえに答えるだけで、あなたにぴったりの曲を提案します。</p>
+      </div>
+
+      <div class="intro-points">
+        <h2 class="section-title">使い方</h2>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <h3 class="card-title">簡単な質問</h3>
+            <p class="card-text">20問のはい/いいえにテンポよく回答！</p>
+          </div>
+          <div class="card">
+            <h3 class="card-title">おすすめ曲を提案</h3>
+            <p class="card-text">診断結果をもとに、おすすめの曲をセレクト。</p>
+          </div>
+          <div class="card">
+            <h3 class="card-title">その場で楽しむ</h3>
+            <p class="card-text">提案された曲をそのまま再生してチェック！</p>
+          </div>
+        </div>
+
+        <div class="section-actions">
+          <%= link_to "今すぐ診断する", diagnoses_start_path, class: "btn btn-primary" %>
+          <%= link_to "使い方を詳しく", "/pages/about", class: "btn btn-outline" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section callouts">
+  <div class="container">
+    <article class="callout callout--diagnose">
+      <div class="callout-inner">
+        <div class="callout__art"></div>
+        <div class="callout__content">
+          <h2>サクッと診断して、ぴったりの一曲に出会おう。</h2>
+          <p class="muted">いまの気分に合わせて、聴きたい曲をおすすめ。まずは数分で完了する診断から。</p>
+          <div class="callout__actions">
+            <%= link_to "診断をはじめる", diagnoses_start_path, class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="callout callout--posts">
+      <div class="callout-inner">
+        <div class="callout__art"></div>
+        <div class="callout__content">
+          <h2>みんなの投稿から、新しい発見を。</h2>
+          <p class="muted">おすすめ曲や感想をチェック。まだ聴いたことのない良曲に出会えるかも。</p>
+          <div class="callout__actions">
+            <%= link_to "投稿一覧を見る", tweets_path, class: "btn btn-outline" %>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="callout callout--mbti">
+      <div class="callout-inner">
+        <div class="callout__art"></div>
+        <div class="callout__content">
+          <h2>MBTIタイプから、気分に合う曲を探す。</h2>
+          <p class="muted">自分のMBTIを選択して、あなたの性格からおすすめ曲をチェック！</p>
+          <div class="callout__actions">
+            <%= link_to "MBTIで探す", mbti_index_path, class: "btn btn-ghost" %>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

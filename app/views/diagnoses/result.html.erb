@@ -1,0 +1,53 @@
+<h2>あなたの診断結果</h2>
+
+<p><%= @result.description %></p>
+
+<h3>おすすめアーティスト①：<%= @result.artist1 %></h3>
+<p><strong>曲：</strong><%= @result.song1 %></p>
+<% if (embed1 = youtube_embed_url(@result.youtube_url1)) %>
+  <div>
+    <iframe
+      src="<%= embed1 %>"
+      title="<%= @result.artist1 %> - <%= @result.song1 %>"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+  </div>
+<% end %>
+
+
+<h3>おすすめアーティスト②：<%= @result.artist2 %></h3>
+<p><strong>曲：</strong><%= @result.song2 %></p>
+<% if (embed2 = youtube_embed_url(@result.youtube_url2)) %>
+  <div>
+    <iframe
+      src="<%= embed2 %>"
+      title="<%= @result.artist2 %> - <%= @result.song2 %>"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+  </div>
+<% end %>
+
+<%= render "share_buttons",
+      url: request.original_url,
+      title: diagnosis_display_title(@result),
+      summary: @result.description %>
+
+<% if user_signed_in? %>
+  <div>
+    この結果はあなたの履歴に保存されました。
+    <%= link_to "履歴を見る", diagnoses_path%>
+  </div>
+<% else %>
+  <div>
+    ログインすると結果を履歴に保存できます。
+    <%= link_to "ログインする", new_user_session_path%>
+  </div>
+<% end %>
+
+<%= link_to "もう一度診断する", diagnoses_questions_path%>

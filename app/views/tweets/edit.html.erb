@@ -1,0 +1,50 @@
+<h1>Tweetを編集</h1>
+
+<% if @tweet.errors.any? %>
+  <div>
+    <strong><%= @tweet.errors.count %>件のエラーがあります:</strong>
+    <ul>
+      <% @tweet.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for @tweet do |f| %>
+  <% if @tweet.respond_to?(:artist) %>
+    <div>
+      <%= f.label :artist, "アーティスト名（必須）" %><br>
+      <%= f.text_field :artist, class: "input", required: true %>
+    </div>
+  <% end %>
+
+  <% if @tweet.respond_to?(:title) %>
+    <div>
+      <%= f.label :title, "曲名（必須）" %><br>
+      <%= f.text_field :title, class: "input", required: true %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :body, "おすすめ理由 / コメント（必須）" %><br>
+    <%= f.text_area :body, rows: 5, class: "input", required: true %>
+  </div>
+
+  <% if @tweet.respond_to?(:youtube_url) %>
+    <div>
+      <%= f.label :youtube_url, "YouTube URL（任意）" %><br>
+      <%= f.text_field :youtube_url, class: "input", placeholder: "https://www.youtube.com/watch?v=..." %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :tag_ids, "タグ（複数選択可）" %>
+    <div>
+      <%= f.collection_check_boxes(:tag_ids, @all_tags, :id, :name) do |tag| %>
+        <label><%= tag.check_box %><%= tag.text %></label>
+      <% end %>
+    </div>
+  </div>
+
+  <%= f.submit "更新する", class: "btn" %>
+  <%= link_to "キャンセル", tweet_path(@tweet), class: "link"%>
+<% end %>

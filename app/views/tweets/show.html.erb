@@ -1,0 +1,71 @@
+<h1>Tweet詳細</h1>
+
+<div>
+  <div><%= l @tweet.created_at, format: :short %></div>
+
+  <p><strong>投稿者：</strong>
+    <% if @tweet.user %>
+      <%= link_to(@tweet.user.name.presence || @tweet.user.email,
+                  user_path(@tweet.user)) %>
+    <% else %>
+      退会ユーザー
+    <% end %>
+  </p>
+
+
+  <% if @tweet.respond_to?(:artist) && @tweet.respond_to?(:title) %>
+    <p><strong>アーティスト：</strong><%= @tweet.artist %></p>
+    <p><strong>曲名：</strong><%= @tweet.title %></p>
+  <% end %>
+
+  <p><strong>おすすめ理由 / コメント：</strong><br>
+    <%= simple_format(@tweet.body) %>
+  </p>
+
+
+  <% if @tweet.tags.any? %>
+    <div>
+      <% @tweet.tags.each do |tag| %>
+        <span><%= tag.name %></span>
+      <% end %>
+    </div>
+  <% end %>
+
+
+  <div>
+    <% if user_signed_in? %>
+      <% if @tweet.liked_by?(current_user) %>
+        <%= link_to tweet_like_path(id: @tweet.id, tweet_id: @tweet.id),
+            data: { turbo_method: :delete } do %>
+          ❤ いいね取り消し
+        <% end %>
+      <% else %>
+        <%= link_to tweet_likes_path(id: @tweet.id, tweet_id: @tweet.id),
+            data: { turbo_method: :post } do %>
+          ♡ いいねする
+        <% end %>
+      <% end %>
+      <span>合計 <%= @tweet.likes.count %></span>
+      <% if current_user.id == @tweet.user_id %>
+        ・ <%= link_to "編集", edit_tweet_path(@tweet)%>
+        ・ <%= link_to "削除", tweet_path(@tweet),
+              data: { turbo_method: :delete, confirm: "削除しますか？" }%>
+      <% end %>
+    <% else %>
+      <span>❤ <%= @tweet.likes.count %></span>
+    <% end %>
+  </div>
+</div>
+
+<% if @tweet.liked_users.any? %>
+  <div>
+    <h2>いいねしたユーザー</h2>
+    <ul>
+      <% @tweet.liked_users.each do |u| %>
+        <li><%= link_to(u.name.presence || u.email, user_path(u)) %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<p><%= link_to "← みんなの投稿一覧に戻る", tweets_path %></p>

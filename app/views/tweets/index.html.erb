@@ -1,0 +1,84 @@
+<h2>おすすめ曲の新規投稿</h2>
+<%= link_to "＋ 新規投稿する", new_tweet_path %>
+
+<h3>投稿を検索</h3>
+<%= form_tag({controller: "tweets", action: "index"}, method: :get) do %>
+  <%= text_field_tag :search, @q, placeholder: "本文で検索（アーティスト名や曲名も本文に書いてOK）" %>
+  <% @selected_tag_ids.each { |tid| concat hidden_field_tag("tag_ids[]", tid) } %>
+  <%= submit_tag "検索する" %>
+<% end %>
+
+<h3>タグで絞り込む</h3>
+<%= form_tag({controller: "tweets", action: "index"}, method: :get) do %>
+  <ul>
+    <% @all_tags.each do |t| %>
+      <li>
+        <label>
+          <%= check_box_tag "tag_ids[]", t.id, @selected_tag_ids.include?(t.id) %>
+          <span><%= t.name %></span>
+        </label>
+      </li>
+    <% end %>
+  </ul>
+  <div>
+    <%= hidden_field_tag :search, @q %>
+    <%= submit_tag "タグで絞り込む" %>
+    <%= link_to "リセット", tweets_path%>
+  </div>
+<% end %>
+
+<h3>投稿一覧</h3>
+<div>
+  <% if @tweets.blank? %>
+    <p>投稿がありません。</p>
+  <% else %>
+    <% @tweets.each do |t| %>
+      <div>
+        <div>
+          <div>
+            <div><%= t.user&.name || t.user&.email %></div>
+            <p><%= t.body %></p>
+            <div>
+              <% t.tags.each do |tag| %>
+                <span><%= tag.name %></span>
+              <% end %>
+            </div>
+            <div><%= l t.created_at, format: :short %></div>
+          </div>
+        <div>
+          <% if user_signed_in? %>
+            <% if current_user.likes.exists?(tweet_id: t.id) %>
+              <%= link_to tweet_like_path(t, current_user.likes.find_by(tweet_id: t.id)),
+                          data: { turbo_method: :delete } do %>
+                <i></i> <%= t.likes.count %>
+              <% end %>
+            <% else %>
+              <%= link_to tweet_likes_path(t), data: { turbo_method: :post } do %>
+                <i></i> <%= t.likes.count %>
+              <% end %>
+            <% end %>
+          <% else %>
+            <i></i> <%= t.likes.count %>
+          <% end %>
+
+          <span><%= link_to "詳細へ", tweet_path(t) %></span>
+          <% if user_signed_in? && current_user.id == t.user_id %>
+            <span><%= link_to "編集する", edit_tweet_path(t) %></span>
+            <span><%= link_to "削除する", tweet_path(t), data: { turbo_method: :delete, confirm: "削除しますか？" } %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div>
+      <%= page_entries_info @tweets %>
+      <%= paginate @tweets %>
+    </div>
+  <% end %>
+</div>
+
+<h3>タグを追加</h3>
+<%= form_tag({controller: "tweets", action: "index"}, method: :get) do %>
+  <%= text_field_tag :tag, nil, placeholder: "新しいタグ名" %>
+  <%= submit_tag "タグを追加" %>
+<% end %>

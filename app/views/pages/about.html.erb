@@ -1,0 +1,55 @@
+<section>
+  <h1>TuneMatch とは？</h1>
+  <p>たった20問の「はい / いいえ」で、いまのあなたの気分に合うアーティストと曲をレコメンドする診断サイトです。</p>
+  <div>
+    <%= link_to "診断をはじめる", diagnoses_start_path %>
+  </div>
+</section>
+
+<section>
+  <h2>使い方</h2>
+  <ol>
+    <li>「診断をはじめる」を押して質問ページへ進みます。</li>
+    <li>20問の質問に <span>はい</span> / <span>いいえ</span> で答えます。</li>
+    <li>回答結果から<strong>おすすめの曲を2曲とアーティスト名</strong>を表示します（YouTubeリンクつき）。</li>
+    <li>気に入らなかったら、もう一度診断もOK！</li>
+  </ol>
+</section>
+
+<section>
+  <h2>アカウント</h2>
+  <% if user_signed_in? %>
+    <p>ログイン中です。自分のおすすめの曲をみんなに共有できます。</p>
+    <div>
+      <%= link_to "おすすめ曲を投稿する", new_tweet_path %>
+      <%= link_to "ログアウト", destroy_user_session_path,
+                  data: { turbo_method: :delete, confirm: "ログアウトしますか？" } %>
+    </div>
+  <% else %>
+    <p>ログインすると、自分のおすすめ曲の投稿やみんなの投稿へのいいねが使えます。</p>
+    <div>
+      <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline-primary" %>
+      <%= link_to "新規登録", new_user_registration_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</section>
+
+<section>
+  <h2>よくある質問</h2>
+  <details>
+    <summary>診断にかかる時間はどれくらい？</summary>
+    <div>20問なので1〜2分で終わります。迷ったら直感でOK</div>
+  </details>
+  <details>
+    <summary>診断の正確さは？</summary>
+    <div>この診断はユーザーの解答結果を4軸（気分・雰囲気・こだわり・ジャンル）のスコアで判定しています。</div>
+  </details>
+  <details>
+    <summary>個人情報は保存される？</summary>
+    <div>診断の回答は匿名で処理され、個人を特定する情報は保存しません。</div>
+  </details>
+</section>
+
+<section>
+  <%= link_to "いますぐ診断をはじめる", diagnoses_start_path %>
+</section>

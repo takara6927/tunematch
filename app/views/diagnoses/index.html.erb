@@ -1,0 +1,15 @@
+<h2>診断履歴</h2>
+
+<% if @diagnoses.present? %>
+  <% @diagnoses.each do |d| %>
+    <div>
+      <div><%= l d.created_at, format: :short %></div>
+      <div>診断結果</div>
+      <p><%= d.result_summary.to_s.truncate(80) %></p>
+      <%= link_to "詳細を見る", diagnosis_path(d) %>
+    </div>
+  <% end %>
+<% else %>
+  <p>まだ保存された診断はありません。</p>
+  <%= link_to "診断をはじめる", diagnoses_questions_path%>
+<% end %>

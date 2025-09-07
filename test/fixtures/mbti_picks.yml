@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mbti_code: MyString
+  artist: MyString
+  title: MyString
+  youtube_url: MyString
+  reason: MyText
+  rank: 1
+
+two:
+  mbti_code: MyString
+  artist: MyString
+  title: MyString
+  youtube_url: MyString
+  reason: MyText
+  rank: 1

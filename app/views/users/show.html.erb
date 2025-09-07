@@ -1,0 +1,136 @@
+<h1><%= @user.name %> さんのマイページ</h1>
+
+<div>
+
+  <section>
+    <p><strong>メール：</strong><%= @user.email %></p>
+    <% if @user.respond_to?(:profile) && @user.profile.present? %>
+      <p><strong>プロフィール：</strong><%= @user.profile %></p>
+    <% end %>
+
+    <% if @user.image&.attached? %>
+      <div>
+        <%= image_tag @user.image, size: "250x200" %>
+      </div>
+    <% end %>
+
+    <% if user_signed_in? && current_user.id == @user.id %>
+      <div>
+        <%= link_to "プロフィールを編集", edit_user_registration_path %>
+      </div>
+    <% end %>
+
+    <div>
+      <h3>サマリー</h3>
+      <ul>
+        <li>投稿数：<%= @stats[:posts_count] %></li>
+        <li>獲得いいね数：<%= @stats[:likes_received] %></li>
+        <li>いいねした数：<%= @stats[:likes_given] %></li>
+        <li>登録日：<%= l @stats[:joined_on], format: :short %></li>
+      </ul>
+    </div>
+
+<% if user_signed_in? && current_user.id == @user.id %>
+  <div>
+    <h3>📝 保存した診断結果</h3>
+
+    <% if @diagnoses.present? %>
+      <ul>
+        <% @diagnoses.each do |d| %>
+          <li>
+            <div><%= l d.created_at, format: :short %></div>
+            <div>
+              <%= link_to "診断結果", diagnosis_path(d)%>
+            </div>
+            <div>
+              <%= truncate(d.result_summary.to_s, length: 80) %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+      <div>
+        <%= link_to "診断履歴をすべて見る (#{@diagnoses_total})", diagnoses_path%>
+      </div>
+    <% else %>
+      <p>まだ保存された診断はありません。</p>
+      <%= link_to "診断をはじめる", diagnoses_questions_path %>
+    <% end %>
+  </div>
+<% end %>
+
+
+
+    <% if @top_tags.present? %>
+      <div>
+        <h3>よく使うタグ TOP10</h3>
+        <div>
+          <% @top_tags.each do |(name, count)| %>
+            <span><%= name %> × <%= count %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+
+  <section>
+
+    <div>
+      <%= link_to "投稿", user_path(@user, tab: "posts"),
+            class: (@tab == "posts" ? "font-bold underline" : "underline") %>
+      <%= link_to "いいね", user_path(@user, tab: "likes"),
+            class: (@tab == "likes" ? "font-bold underline" : "underline") %>
+    </div>
+
+    <% if @tweets.blank? %>
+      <p>まだ表示する内容がありません。</p>
+    <% else %>
+      <% @tweets.each do |t| %>
+        <div>
+          <div><%= l t.created_at, format: :short %></div>
+
+
+          <div>
+            <div><%= t.user&.name || t.user&.email %></div>
+
+
+            <% if t.respond_to?(:artist) && t.respond_to?(:title) %>
+              <div>
+                <strong><%= t.artist %></strong> – <%= t.title %>
+              </div>
+            <% end %>
+
+            <p><%= t.body %></p>
+
+            <div>
+              <% t.tags.each do |tag| %>
+                <span><%= tag.name %></span>
+              <% end %>
+            </div>
+          </div>
+
+
+          <div>
+            <span>❤ <%= t.likes.count %></span>
+            <span><%= link_to "詳細", tweet_path(t) %></span>
+            <% if user_signed_in? && current_user.id == t.user_id %>
+              <span><%= link_to "編集", edit_tweet_path(t) %></span>
+              <span><%= link_to "削除", tweet_path(t),
+                            data: { turbo_method: :delete, confirm: "削除しますか？" } %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div>
+        <%= page_entries_info @tweets %>
+        <%= paginate @tweets %>
+      </div>
+    <% end %>
+  </section>
+</div>
+
+<div>
+  <%= link_to "← みんなの投稿一覧", tweets_path%>
+</div>
+
