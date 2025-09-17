@@ -1,4 +1,15 @@
 {
-  "name": "app",
-  "private": "true"
+  "name": "tunematch",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "sass ./app/assets/stylesheets/application.scss ./app/assets/builds/application.css --no-source-map --style=compressed"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "sass": "^1.92.1",
+    "tailwindcss": "^3.4.13"
+  }
 }
+
