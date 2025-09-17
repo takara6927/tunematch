@@ -1,14 +1,113 @@
-<h2>質問に答えてください</h2>
+<div class="tm-wrap">
+  <header class="tm-header">
+    <h1 class="tm-title">質問に答えてください</h1>
+    <div class="tm-progress">
+      <div class="tm-progress__bar" id="jsProgress" style="width:0%"></div>
+    </div>
+    <p class="tm-progress__text">
+      <span id="jsCount">0</span>/<span id="jsTotal"><%= @questions.size %></span>
+      （<span id="jsPercent">0</span>%）
+    </p>
+  </header>
 
-<%= form_with url: diagnoses_result_path, method: :post, data: { turbo: false } do |form| %>
+  <%= form_with url: diagnoses_result_path, method: :post, data: { turbo: false }, class: "tm-form" do %>
+    <ol class="tm-list">
+      <% @questions.each_with_index do |q, i| %>
+        <li class="tm-q">
+          <div class="tm-q__head">
+            <span class="tm-chip"><%= (i+1).to_s.rjust(2,'0') %></span>
+            <p class="tm-q__text"><%= q[:text] %></p>
+          </div>
 
+          <div class="tm-choices" data-group="<%= i %>">
+            <label class="tm-choice tm-choice--yes">
+              <%= radio_button_tag "answers[#{i}]", "yes", false, required: true, class: "tm-radio" %>
+              <span class="tm-choice__label">はい</span>
+            </label>
+            <label class="tm-choice tm-choice--no">
+              <%= radio_button_tag "answers[#{i}]", "no", false, class: "tm-radio" %>
+              <span class="tm-choice__label">いいえ</span>
+            </label>
+          </div>
+        </li>
+      <% end %>
+    </ol>
 
-  <% @questions.each_with_index do |q, i| %>
-    <div>
-      <p><%= q[:text] %></p>
-      <%= radio_button_tag "answers[#{i}]", "yes", false, required: true %> はい
-      <%= radio_button_tag "answers[#{i}]", "no", false %> いいえ
+    <div class="tm-actions">
+      <%= submit_tag "診断結果を見る", class: "tm-btn" %>
     </div>
   <% end %>
-  <%= submit_tag "診断結果を見る"%>
-<% end %>
+</div>
+
+<style>
+  .tm-wrap{max-width:980px;margin:40px auto;padding:0 16px}
+  .tm-title{font-size:clamp(22px,3vw,30px);font-weight:900;color:var(--color-dark,#1F2937);margin:0 0 12px}
+  .tm-header{margin-bottom:16px}
+  .tm-progress{height:12px;background:#E5E7EB;border-radius:999px;overflow:hidden;
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.06)}
+  .tm-progress__bar{height:100%;
+    background:linear-gradient(90deg,var(--color-yellow,#F6D24D),var(--color-teal,#2ECAC3));
+    transition:width .25s ease}
+  .tm-progress__text{margin:8px 4px 0;color:#374151;font-size:14px}
+  .tm-form{margin-top:14px}
+  .tm-list{list-style:none;padding:0;margin:0;display:grid;gap:16px}
+  .tm-q{
+    background:
+      radial-gradient(600px 300px at 110% -20%, rgba(255,138,61,.12), transparent 60%),
+      #fff;
+    border:1px solid rgba(31,41,55,.06);border-radius:18px;padding:18px;
+    box-shadow:0 6px 18px rgba(31,41,55,.06)
+  }
+  .tm-q__head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .tm-chip{
+  background: var(--color-teal,#2ECAC3);color:#fff;font-weight:800;border-radius:999px;padding:4px 10px;font-size:12px;
+  }
+  .tm-q__text{margin:0;color:#111827;font-weight:800}
+  .tm-choices{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tm-choice{
+    display:flex;align-items:center;gap:10px;background:var(--color-cream,#FFF8E7);border:2px solid transparent;
+    padding:14px;border-radius:14px;cursor:pointer;user-select:none;transition:border-color .15s ease, background .15s ease, transform .05s ease
+  }
+  .tm-choice:hover{transform:translateY(-1px)}
+  .tm-choice--yes:hover{border-color:var(--color-teal,#2ECAC3)}
+  .tm-choice--no:hover{border-color:var(--color-orange,#FF8A3D)}
+  .tm-radio{width:18px;height:18px;accent-color:var(--color-teal,#2ECAC3)}
+  .tm-choice.is-selected{background:#fff;border-color:var(--color-teal,#2ECAC3)}
+  .tm-choice--no.is-selected{background:#fff;border-color:var(--color-orange,#FF8A3D)}
+  .tm-actions{margin:22px 0 32px;text-align:center}
+  .tm-btn{
+    display:inline-block;background:linear-gradient(180deg,var(--color-teal,#2ECAC3),#1fb5ae);
+    color:#fff;text-decoration:none;font-weight:900;padding:12px 24px;border-radius:14px;border:none
+  }
+  @media (max-width:560px){.tm-choices{grid-template-columns:1fr}}
+</style>
+
+<script>
+  (function () {
+    const total = <%= @questions.size %>;
+    const groups = document.querySelectorAll('.tm-choices');
+    const countEl = document.getElementById('jsCount');
+    const percentEl = document.getElementById('jsPercent');
+    const barEl = document.getElementById('jsProgress');
+
+    function recalc() {
+      const answered = Array.from(groups).filter(g => g.querySelector('input[type="radio"]:checked')).length;
+      const ratio = Math.max(0, Math.min(1, answered / total));
+      countEl.textContent = answered;
+      const pct = Math.round(ratio * 100);
+      percentEl.textContent = pct;
+      barEl.style.width = pct + '%';
+    }
+
+    groups.forEach(g => {
+      g.addEventListener('change', (e) => {
+        g.querySelectorAll('.tm-choice').forEach(c => c.classList.remove('is-selected'));
+        const label = e.target.closest('.tm-choice');
+        if (label) label.classList.add('is-selected');
+        recalc();
+      });
+    });
+
+    recalc();
+  })();
+</script>

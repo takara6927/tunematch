@@ -1,88 +1,73 @@
 class TweetsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_tweet, only: [:show, :edit, :update, :destroy]
+  before_action :set_all_tags, only: [:new, :create, :edit, :update]
   def index
-    if params[:tag].present?
-      Tag.find_or_create_by!(name: params[:tag].to_s.strip)
-      redirect_to tweets_path and return
-    end
+    @q = params[:search].to_s.strip
+    @selected_tag_ids = Array(params[:tag_ids]).reject(&:blank?).map!(&:to_i)
+    @all_tags = Tag.order(:name)
 
+    @tweets = Tweet.includes(:user, :tags).order(created_at: :desc)
 
-    scope = Tweet.includes(:user, :tags).order(created_at: :desc)
-
-    raw_tag_ids = params[:tag_ids]
-    @selected_tag_ids =
-      if raw_tag_ids.is_a?(Hash)
-        raw_tag_ids.select { |_k, v| v == "1" }.keys.map!(&:to_i)
+    if @q.present?
+      adapter = ActiveRecord::Base.connection.adapter_name.downcase
+      if adapter.include?("postgres")
+        @tweets = @tweets.where(
+          "artist ILIKE :q OR title ILIKE :q OR body ILIKE :q",
+          q: "%#{@q}%"
+        )
       else
-        Array(raw_tag_ids).map!(&:to_i)
-      end.uniq
+        q = "%#{@q.downcase}%"
+        @tweets = @tweets.where(
+          "LOWER(artist) LIKE :q OR LOWER(title) LIKE :q OR LOWER(body) LIKE :q",
+          q: q
+        )
+      end
+    end
 
     if @selected_tag_ids.present?
-      scope = scope.joins(:tweet_tag_relations)
-                   .where(tweet_tag_relations: { tag_id: @selected_tag_ids })
-                   .group("tweets.id")
-                   .having("COUNT(DISTINCT tweet_tag_relations.tag_id) = ?", @selected_tag_ids.size)
+      @tweets = @tweets.joins(:tags).where(tags: { id: @selected_tag_ids }).distinct
     end
 
 
-    @q = params[:search].to_s.strip
-    scope = scope.where("tweets.body LIKE ?", "%#{@q}%") if @q.present?
-
-
-    @tweets   = scope.page(params[:page]).per(10)
-    @all_tags = Tag.order(:name)
+    @tweets = @tweets.page(params[:page]) if @tweets.respond_to?(:page)
   end
 
-  def new
-    @tweet = Tweet.new
-    @all_tags = Tag.order(:name)
-  end
-
+  def show; end
+  def new; @tweet = Tweet.new; end
+  def edit; end
 
   def create
-    @tweet = Tweet.new(tweet_params.merge(user_id: current_user.id))
+    @tweet = current_user.tweets.build(tweet_params)
     if @tweet.save
-      redirect_to tweets_path, notice: "投稿しました"
+      redirect_to @tweet, notice: "投稿しました"
     else
-      @all_tags = Tag.order(:name)
-      flash.now[:alert] = "投稿に失敗しました"
       render :new, status: :unprocessable_entity
     end
   end
 
-
-  def show
-    @tweet = Tweet.find(params[:id])
-  end
-
-
-  def edit
-    @tweet = Tweet.find(params[:id])
-    @all_tags = Tag.order(:name)
-  end
-
-
   def update
-    @tweet = Tweet.find(params[:id])
     if @tweet.update(tweet_params)
-      redirect_to tweet_path(@tweet), notice: "更新しました"
+      redirect_to @tweet, notice: "更新しました"
     else
-      @all_tags = Tag.order(:name)
-      flash.now[:alert] = "更新に失敗しました"
       render :edit, status: :unprocessable_entity
     end
   end
 
-
   def destroy
-    tweet = Tweet.find(params[:id])
-    tweet.destroy
-    redirect_to tweets_path, notice: "削除しました"
+    @tweet.destroy
+    redirect_to tweets_url, notice: "削除しました"
   end
 
   private
 
+  def set_tweet
+    @tweet = Tweet.find(params[:id])
+  end
+
+  def set_all_tags
+    @all_tags = Tag.all
+  end
   def tweet_params
-    params.require(:tweet).permit(:artist, :title, :body, tag_ids: [])
+    params.require(:tweet).permit(:artist, :title, :body, :youtube_url, tag_ids: [])
   end
 end

@@ -1,15 +1,48 @@
-<h2>診断履歴</h2>
+<div class="tm-wrap">
+  <header class="tm-header">
+    <h1 class="tm-title">診断履歴</h1>
+    <p class="tm-sub">これまで保存された診断の一覧です。気になる結果をタップして詳細を確認できます。</p>
+  </header>
 
-<% if @diagnoses.present? %>
-  <% @diagnoses.each do |d| %>
-    <div>
-      <div><%= l d.created_at, format: :short %></div>
-      <div>診断結果</div>
-      <p><%= d.result_summary.to_s.truncate(80) %></p>
-      <%= link_to "詳細を見る", diagnosis_path(d) %>
-    </div>
+  <% if @diagnoses.present? %>
+    <ul class="tm-list">
+      <% @diagnoses.each do |d| %>
+        <li class="tm-item">
+          <div class="tm-item__head">
+            <span class="tm-date"><%= l d.created_at, format: :short %></span>
+            <span class="tm-badge">履歴</span>
+          </div>
+          <p class="tm-summary"><%= d.result_summary.to_s.truncate(80) %></p>
+          <div class="tm-actions">
+            <%= link_to "詳細を見る", diagnosis_path(d), class: "tm-btn" %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <section class="tm-empty">
+      <div class="tm-empty__icon">♪</div>
+      <h2>まだ保存された診断はありません</h2>
+      <p>まずは診断を実行して、あなたに合う音楽を見つけましょう。</p>
+      <%= link_to "診断をはじめる", diagnoses_questions_path, class: "tm-btn" %>
+    </section>
   <% end %>
-<% else %>
-  <p>まだ保存された診断はありません。</p>
-  <%= link_to "診断をはじめる", diagnoses_questions_path%>
-<% end %>
+</div>
+
+<style>
+  .tm-wrap{max-width:920px;margin:40px auto;padding:0 16px}
+  .tm-header{margin-bottom:12px}
+  .tm-title{font-size:clamp(22px,3vw,30px);font-weight:900;color:var(--color-dark,#1F2937);margin:0 0 4px}
+  .tm-sub{color:#374151;margin:0}
+  .tm-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px}
+  .tm-item{background:#fff;border:1px solid rgba(31,41,55,.06);border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(31,41,55,.06)}
+  .tm-item__head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .tm-date{font-size:12px;color:#6B7280;background:#F3F4F6;border-radius:999px;padding:4px 8px}
+  .tm-badge{font-size:11px;font-weight:800;color:#063b3a;background:var(--color-teal,#2ECAC3);border-radius:999px;padding:4px 8px}
+  .tm-summary{margin:6px 0 12px;color:#111827;font-weight:700}
+  .tm-actions{text-align:right}
+  .tm-btn{display:inline-block;background:linear-gradient(180deg,var(--color-teal,#2ECAC3),#1fb5ae);color:#fff;
+          text-decoration:none;font-weight:900;padding:10px 18px;border-radius:12px}
+  .tm-empty{background:var(--color-cream,#FFF8E7);border:1px dashed rgba(31,41,55,.2);border-radius:18px;padding:26px;text-align:center;margin-top:16px}
+  .tm-empty__icon{font-size:32px;line-height:1;margin-bottom:8px}
+</style>

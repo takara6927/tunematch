@@ -1,3 +1,50 @@
-<h2>診断スタート</h2>
-<p>20問の質問に答えるだけで、あなたに合った音楽がわかります！</p>
-<%= link_to "診断をはじめる", diagnoses_questions_path, class: "btn btn-success" %>
+<div class="tm-wrap">
+  <section class="tm-hero tm-card">
+    <div class="tm-badge">NEW</div>
+    <h1 class="tm-title">診断スタート</h1>
+    <p class="tm-sub">
+      20問の質問に答えるだけで、あなたに合った音楽が見つかります。
+    </p>
+
+    <%= link_to "診断をはじめる", diagnoses_questions_path, class: "tm-btn" %>
+
+    <ul class="tm-points">
+      <li><span class="dot dot--teal"></span> 所要時間の目安：1~2分</li>
+      <li><span class="dot dot--orange"></span> すべて二択（はい／いいえ）でサクサク回答</li>
+      <li><span class="dot dot--yellow"></span> 結果は保存・シェア可能</li>
+    </ul>
+  </section>
+</div>
+
+<style>
+  .tm-wrap{max-width:880px;margin:48px auto;padding:0 16px}
+  .tm-card{
+    background:
+      radial-gradient(1200px 600px at -10% -10%, rgba(46,202,195,.18), transparent 60%),
+      radial-gradient(800px 500px at 110% 0%, rgba(246,210,77,.18), transparent 50%),
+      radial-gradient(700px 500px at 50% 120%, rgba(255,138,61,.18), transparent 55%),
+      var(--color-cream,#FFF8E7);
+    border-radius:22px;padding:32px 24px;border:1px solid rgba(31,41,55,.08);
+    box-shadow:0 10px 30px rgba(31,41,55,.12)
+  }
+  .tm-hero{display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+  .tm-badge{
+    position:absolute;top:14px;left:14px;font-weight:800;font-size:12px;letter-spacing:.08em;
+    background:linear-gradient(90deg,var(--color-teal,#2ECAC3),var(--color-yellow,#F6D24D));
+    color:#073b3a;padding:6px 10px;border-radius:999px
+  }
+  .tm-title{font-size:clamp(24px,3vw,34px);font-weight:900;color:var(--color-dark,#1F2937);margin:0 0 8px}
+  .tm-sub{color:#374151;margin:0 0 22px}
+  .tm-btn{
+    display:inline-block;background:linear-gradient(180deg,var(--color-teal,#2ECAC3),#1fb5ae);
+    color:#fff;text-decoration:none;font-weight:800;padding:12px 24px;border-radius:14px;
+    transition:transform .06s ease, box-shadow .2s ease
+  }
+  .tm-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(46,202,195,.45)}
+  .tm-points{display:grid;gap:10px;margin:22px 0 0;padding-left:0;list-style:none;max-width:520px}
+  .tm-points li{background:#fff;border:1px solid rgba(31,41,55,.06);padding:12px;border-radius:14px;color:#374151;display:flex;align-items:center;gap:10px}
+  .dot{width:10px;height:10px;border-radius:50%}
+  .dot--teal{background:var(--color-teal,#2ECAC3)}
+  .dot--orange{background:var(--color-orange,#FF8A3D)}
+  .dot--yellow{background:var(--color-yellow,#F6D24D)}
+</style>

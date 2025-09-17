@@ -1,8 +1,119 @@
-<h1>MBTIで曲を探す</h1>
-<p>自分のMBTIタイプを選んでください。</p>
+<%
+  labels = {
+    "INTJ"=>"建築家","INTP"=>"論理学者","ENTJ"=>"指揮官","ENTP"=>"討論者",
+    "ISTP"=>"巨匠","ISFP"=>"冒険家","ESTP"=>"起業家","ESFP"=>"エンターテイナー",
+    "ISTJ"=>"管理者","ISFJ"=>"擁護者","ESTJ"=>"幹部","ESFJ"=>"領事",
+    "INFJ"=>"提唱者","INFP"=>"仲介者","ENFJ"=>"主人公","ENFP"=>"広報運動家"
+  }
 
-<div>
-  <% @codes.each do |c| %>
-    <%= link_to c, mbti_show_path(c) %>
-  <% end %>
+  groups = {
+    analysts:  %w[INTJ INTP ENTJ ENTP],
+    explorers: %w[ISTP ISFP ESTP ESFP],
+    sentinels: %w[ISTJ ISFJ ESTJ ESFJ],
+    diplomats: %w[INFJ INFP ENFJ ENFP]
+  }
+
+  codes = @codes.present? ? @codes : labels.keys
+%>
+
+<div class="tm-wrap">
+  <header class="tm-header">
+    <h1 class="tm-title">MBTIで曲を探す</h1>
+    <p class="tm-sub">自分のMBTIタイプを選んでください。</p>
+  </header>
+
+  <div class="tm-grid-2x2">
+
+    
+    <section class="tm-block tm-block--analyst">
+      <h2 class="tm-block__title">分析家</h2>
+      <ul class="tm-block__list">
+        <% (groups[:analysts] & codes).each do |c| %>
+          <li>
+            <%= link_to mbti_show_path(c), class: "tm-card tm-card--analyst" do %>
+              <div class="tm-card__code"><%= c %></div>
+              <div class="tm-card__label"><%= labels[c] %></div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+
+    
+    <section class="tm-block tm-block--explorer">
+      <h2 class="tm-block__title">探検家</h2>
+      <ul class="tm-block__list">
+        <% (groups[:explorers] & codes).each do |c| %>
+          <li>
+            <%= link_to mbti_show_path(c), class: "tm-card tm-card--explorer" do %>
+              <div class="tm-card__code"><%= c %></div>
+              <div class="tm-card__label"><%= labels[c] %></div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+
+    
+    <section class="tm-block tm-block--sentinel">
+      <h2 class="tm-block__title">番人</h2>
+      <ul class="tm-block__list">
+        <% (groups[:sentinels] & codes).each do |c| %>
+          <li>
+            <%= link_to mbti_show_path(c), class: "tm-card tm-card--sentinel" do %>
+              <div class="tm-card__code"><%= c %></div>
+              <div class="tm-card__label"><%= labels[c] %></div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+
+    
+    <section class="tm-block tm-block--diplomat">
+      <h2 class="tm-block__title">外交官</h2>
+      <ul class="tm-block__list">
+        <% (groups[:diplomats] & codes).each do |c| %>
+          <li>
+            <%= link_to mbti_show_path(c), class: "tm-card tm-card--diplomat" do %>
+              <div class="tm-card__code"><%= c %></div>
+              <div class="tm-card__label"><%= labels[c] %></div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+
+  </div>
 </div>
+
+<style>
+  .tm-wrap{max-width:1200px;margin:40px auto;padding:0 16px}
+  .tm-title{font-size:clamp(24px,3vw,32px);font-weight:900;margin:0 0 6px}
+  .tm-sub{color:#374151;margin:0 0 20px}
+
+  .tm-grid-2x2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;
+    gap:20px;
+  }
+  @media(max-width:768px){
+    .tm-grid-2x2{grid-template-columns:1fr}
+  }
+
+  .tm-block{padding:12px;border-radius:12px}
+  .tm-block__title{font-size:22px;font-weight:800;margin-bottom:10px}
+  .tm-block__list{list-style:none;margin:0;padding:0;display:grid;gap:10px;grid-template-columns:repeat(2,1fr)}
+
+  .tm-card{display:block;text-decoration:none;border-radius:12px;padding:14px;text-align:center;font-weight:700;color:#111;
+           box-shadow:0 4px 12px rgba(0,0,0,.15);transition:.2s}
+  .tm-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+  .tm-card__code{font-size:20px;font-weight:900}
+  .tm-card__label{margin-top:4px;font-size:14px}
+
+  .tm-card--analyst{background:radial-gradient(circle at top left, rgba(139,92,246,.55), rgba(167,139,250,.45)),#fff}
+  .tm-card--explorer{background:radial-gradient(circle at top right, rgba(245,158,11,.55), rgba(253,186,116,.45)),#fff}
+  .tm-card--sentinel{background:radial-gradient(circle at bottom left, rgba(59,130,246,.55), rgba(125,211,252,.45)),#fff}
+  .tm-card--diplomat{background:radial-gradient(circle at bottom right, rgba(16,185,129,.55), rgba(134,239,172,.45)),#fff}
+</style>

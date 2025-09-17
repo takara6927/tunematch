@@ -66,3 +66,4 @@ gem 'kaminari'
 group :production do
   gem 'pg'
 end
+gem "cssbundling-rails", "~> 1.4"

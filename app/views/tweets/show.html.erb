@@ -1,71 +1,158 @@
-<h1>Tweet詳細</h1>
+<h1 class="tw-page-title">Tweet詳細</h1>
 
-<div>
-  <div><%= l @tweet.created_at, format: :short %></div>
+<div class="tw-wrap-show">
+  <article class="tw-card tw-tweet tw-tweet--show">
+    <header class="tw-tweet__head">
+      <div class="tw-user">
+        <% name = (@tweet.user&.name.presence || @tweet.user&.email || "ユーザー") %>
+        <div class="tw-avatar"><%= name.to_s[0].to_s.upcase %></div>
+        <div class="tw-user__meta">
+          <div class="tw-user__name"><%= name %></div>
+          <div class="tw-user__date"><%= l(@tweet.created_at, format: :short) %></div>
+        </div>
+      </div>
 
-  <p><strong>投稿者：</strong>
-    <% if @tweet.user %>
-      <%= link_to(@tweet.user.name.presence || @tweet.user.email,
-                  user_path(@tweet.user)) %>
-    <% else %>
-      退会ユーザー
-    <% end %>
-  </p>
-
-
-  <% if @tweet.respond_to?(:artist) && @tweet.respond_to?(:title) %>
-    <p><strong>アーティスト：</strong><%= @tweet.artist %></p>
-    <p><strong>曲名：</strong><%= @tweet.title %></p>
-  <% end %>
-
-  <p><strong>おすすめ理由 / コメント：</strong><br>
-    <%= simple_format(@tweet.body) %>
-  </p>
-
-
-  <% if @tweet.tags.any? %>
-    <div>
-      <% @tweet.tags.each do |tag| %>
-        <span><%= tag.name %></span>
+      <% if user_signed_in? && current_user.id == @tweet.user_id %>
+        <nav class="tw-actions">
+          <%= link_to "編集", edit_tweet_path(@tweet), class: "tw-btn tw-btn--sm tw-btn--ghost" %>
+          <%= button_to "削除",
+                tweet_path(@tweet),
+                method: :delete,
+                data: { turbo_confirm: "削除しますか？" },
+                class: "tw-btn tw-btn--sm tw-btn--ghost tw-btn--danger",
+                form: { class: "tw-inline-form" } %>
+        </nav>
       <% end %>
+    </header>
+
+    <% if @tweet.artist.present? || @tweet.title.present? %>
+      <div class="tw-song">
+        <div class="tw-song__title">
+          <%= @tweet.artist %><% if @tweet.artist.present? && @tweet.title.present? %> – <% end %><%= @tweet.title %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="tw-tweet__body">
+      <p class="tw-strong">おすすめ理由 / コメント</p>
+      <div class="tw-text"><%= simple_format(@tweet.body) %></div>
     </div>
-  <% end %>
 
-
-  <div>
-    <% if user_signed_in? %>
-      <% if @tweet.liked_by?(current_user) %>
-        <%= link_to tweet_like_path(id: @tweet.id, tweet_id: @tweet.id),
-            data: { turbo_method: :delete } do %>
-          ❤ いいね取り消し
+    <% if @tweet.tags.any? %>
+      <div class="tw-tweet__tags">
+        <% @tweet.tags.each do |tag| %>
+          <%= link_to tweets_path(tag_ids: [tag.id]),
+                      class: "tw-chip tw-chip--mini",
+                      title: "このタグの投稿一覧へ" do %>
+            #<%= tag.name %>
+          <% end %>
         <% end %>
-      <% else %>
-        <%= link_to tweet_likes_path(id: @tweet.id, tweet_id: @tweet.id),
-            data: { turbo_method: :post } do %>
-          ♡ いいねする
-        <% end %>
-      <% end %>
-      <span>合計 <%= @tweet.likes.count %></span>
-      <% if current_user.id == @tweet.user_id %>
-        ・ <%= link_to "編集", edit_tweet_path(@tweet)%>
-        ・ <%= link_to "削除", tweet_path(@tweet),
-              data: { turbo_method: :delete, confirm: "削除しますか？" }%>
-      <% end %>
-    <% else %>
-      <span>❤ <%= @tweet.likes.count %></span>
+      </div>
     <% end %>
+
+
+    <footer class="tw-tweet__foot">
+      <div class="tw-like">
+        <% if user_signed_in? %>
+          <% if (like = current_user.likes.find_by(tweet_id: @tweet.id)) %>
+            <%= button_to "♥ いいね取り消し",
+                  tweet_like_path(@tweet, like),
+                  method: :delete,
+                  class: "tw-like__btn is-liked",
+                  form: { class: "tw-inline-form" } %>
+          <% else %>
+            <%= button_to "♡ いいね",
+                  tweet_likes_path(@tweet),
+                  method: :post,
+                  class: "tw-like__btn",
+                  form: { class: "tw-inline-form" } %>
+          <% end %>
+        <% else %>
+          <%= link_to "ログインしていいね", new_user_session_path, class: "tw-link" %>
+        <% end %>
+        <span class="tw-badge"><%= @tweet.likes.count %></span>
+      </div>
+    </footer>
+  </article>
+
+  <div class="tw-back">
+    <%= link_to "← みんなの投稿一覧に戻る", tweets_path, class: "tw-link" %>
   </div>
 </div>
 
-<% if @tweet.liked_users.any? %>
-  <div>
-    <h2>いいねしたユーザー</h2>
-    <ul>
-      <% @tweet.liked_users.each do |u| %>
-        <li><%= link_to(u.name.presence || u.email, user_path(u)) %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
+<style>
+  :root{
+    --text:#0f172a; --muted:#64748b; --card:#fff; --border:#e5e7eb;
+    --g1:#2ECAC3; --g2:#FF8A3D; --g3:#F6D24D;
+    --bg1:rgba(46,202,195,.18); --bg2:rgba(246,210,77,.18);
+  }
 
-<p><%= link_to "← みんなの投稿一覧に戻る", tweets_path %></p>
+  .tw-page-title{
+    margin:18px 0;font-weight:900;font-size:clamp(22px,3vw,28px);
+    background:linear-gradient(90deg,var(--g1),var(--g2) 70%,var(--g3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+
+  .tw-wrap-show{max-width:860px;margin:0 auto;padding:0 16px}
+
+  .tw-card{
+    background:
+      radial-gradient(700px 380px at 110% -10%, var(--bg2), transparent 55%),
+      radial-gradient(700px 380px at -10% 110%, var(--bg1), transparent 55%),
+      var(--card);
+    border:1px solid rgba(31,41,55,.08);
+    border-radius:18px;padding:18px;
+    box-shadow:0 12px 28px rgba(17,24,39,.12);
+  }
+
+  .tw-tweet__head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .tw-user{display:flex;gap:10px;align-items:center}
+  .tw-avatar{width:40px;height:40px;border-radius:50%;background:#e2e8f0;color:#1f2937;display:grid;place-items:center;font-weight:900}
+  .tw-user__name{font-weight:900;color:#0f172a}
+  .tw-user__date{font-size:12px;color:var(--muted)}
+  .tw-actions{display:flex;gap:8px}
+
+  .tw-song{margin:8px 2px 4px}
+  .tw-song__title{
+    font-weight:900;font-size:clamp(18px,2.2vw,22px);
+    background:linear-gradient(90deg,var(--g1),var(--g2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+
+  .yt-wrap{position:relative;width:100%;max-width:720px;margin:12px auto;border-radius:12px;overflow:hidden;aspect-ratio:16/9;box-shadow:0 10px 26px rgba(17,24,39,.12)}
+  .yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  .tw-tweet__body{margin-top:10px}
+  .tw-strong{font-weight:900;margin:0 0 6px;background:linear-gradient(90deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tw-text{line-height:1.8;color:#111827}
+
+  .tw-tweet__tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .tw-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:#f3f4f6;color:#0f172a;border-radius:999px;padding:6px 10px;font-size:14px;text-decoration:none}
+  .tw-chip--mini{padding:4px 8px;font-size:12px}
+  .tw-chip:hover{filter:brightness(.98)}
+
+  .tw-tweet__foot{display:flex;justify-content:flex-start;align-items:center;margin-top:12px}
+  .tw-like{display:flex;align-items:center;gap:8px}
+  .tw-like__btn{background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 10px;text-decoration:none;color:#0f172a;font-weight:800}
+  .tw-like__btn.is-liked{border-color:#fca5a5;color:#dc2626}
+  .tw-badge{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 8px;border-radius:999px;background:#111827;color:#fff;font-weight:900;font-size:12px}
+
+  .tw-btn{
+    background-image:linear-gradient(90deg,var(--g1),var(--g2));
+    background-size:200% 100%;background-position:0% 50%;
+    color:#fff;display:inline-flex;align-items:center;gap:8px;
+    padding:10px 14px;border:none;border-radius:12px;
+    font-weight:900;text-decoration:none;
+    box-shadow:0 6px 16px rgba(31,41,55,.16);
+    transition:background-position .35s,transform .06s,box-shadow .2s,filter .2s;
+  }
+  .tw-btn:hover{background-position:100% 50%;filter:brightness(1.03);transform:translateY(-1px);box-shadow:0 12px 26px rgba(31,41,55,.22)}
+  .tw-btn--sm{padding:6px 10px;border-radius:10px;font-size:14px}
+  .tw-btn--ghost{background:#fff;color:var(--text);border:2px solid var(--border)}
+  .tw-btn--danger{color:#b91c1c;border-color:#fecaca}
+  .tw-inline-form{display:inline}
+
+  .tw-back{margin:16px 2px;color:var(--muted)}
+  .tw-link{color:#2563eb;text-decoration:none}
+  .tw-link:hover{text-decoration:underline}
+</style>

@@ -1,36 +1,74 @@
-<h1><%= @code %> におすすめの曲</h1>
-<%= link_to "← MBTI一覧へ", mbti_index_path%>
+<div class="tm-wrap">
+  <header class="tm-header">
+    <h1 class="tm-title"><%= @code %> におすすめの曲</h1>
+    <%= link_to "← MBTI一覧へ戻る", mbti_index_path, class: "tm-back" %>
+  </header>
 
-<% if @picks.blank? %>
-  <p>まだ登録がありません。管理者はseedを追加してください。</p>
-<% else %>
-  <div>
-    <% @picks.each do |p| %>
-      <div>
-        <div><%= p.artist %> — <%= p.title %></div>
+  <% if @picks.blank? %>
+    <p class="tm-empty">まだ登録曲がありません。管理者は seed を追加してください。</p>
+  <% else %>
+    <div class="tm-track-list">
+      <% @picks.each do |p| %>
+        <div class="tm-track-card">
+          <div class="tm-track-thumb">
+            <% if (embed = youtube_embed_url(p.youtube_url)) %>
+              <div class="yt-wrap">
+                <iframe src="<%= embed %>" title="<%= p.title %>" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen loading="lazy"></iframe>
+              </div>
+            <% else %>
+              <a href="<%= p.youtube_url %>" target="_blank" rel="noopener" class="yt-link">YouTubeで聴く</a>
+            <% end %>
+          </div>
 
-        <% if p.reason.present? %>
-          <p><%= p.reason %></p>
-        <% end %>
-
-        <div>
-          <% if (embed = youtube_embed_url(p.youtube_url)) %>
-            <div>
-              <iframe
-                src="<%= embed %>"
-                title="<%= "#{p.artist} - #{p.title}" %>"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-                loading="lazy"></iframe>
-            </div>
-          <% else %>
-            <a href="<%= p.youtube_url %>" target="_blank" rel="noopener" class="underline">YouTubeで聴く</a>
-          <% end %>
+          <div class="tm-track-info">
+            <h2 class="tm-track-title"><%= p.title %></h2>
+            <p class="tm-track-artist"><%= p.artist %></p>
+            <% if p.reason.present? %>
+              <p class="tm-track-reason"><%= p.reason %></p>
+            <% end %>
+          </div>
         </div>
-        <!-- ★ ここまで -->
-      </div>
-    <% end %>
-  </div>
-<% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .tm-wrap{max-width:1100px;margin:40px auto;padding:0 16px}
+  .tm-title{font-size:clamp(24px,3vw,32px);font-weight:900;margin-bottom:16px;
+            background:linear-gradient(90deg,#2ECAC3,#FF8A3D);
+            -webkit-background-clip:text;color:transparent}
+  .tm-back{display:inline-block;margin-bottom:20px;color:#2563eb;text-decoration:none;font-weight:600}
+  .tm-back:hover{text-decoration:underline}
+
+  .tm-empty{color:#6b7280;font-size:14px;margin-top:20px}
+
+  .tm-track-list{display:grid;gap:20px}
+  .tm-track-card{
+    display:flex;gap:16px;align-items:stretch;
+    background:linear-gradient(135deg,#fff,#f9fafb);
+    border-radius:16px;
+    box-shadow:0 6px 16px rgba(0,0,0,.1);
+    overflow:hidden;
+    transition:transform .15s ease, box-shadow .2s ease;
+  }
+  .tm-track-card:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,.15)}
+
+  .tm-track-thumb{flex:0 0 40%;position:relative}
+  .yt-wrap{position:relative;width:100%;padding-top:56.25%;overflow:hidden;background:#000}
+  .yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  .yt-link{display:flex;align-items:center;justify-content:center;height:100%;
+           background:linear-gradient(135deg,#2ECAC3,#3db6ff);color:#fff;
+           text-decoration:none;font-weight:700;border-radius:0}
+  .yt-link:hover{opacity:.9}
+
+  .tm-track-info{flex:1;padding:16px;display:flex;flex-direction:column;justify-content:center}
+  .tm-track-title{font-size:20px;font-weight:800;margin:0;
+                  background:linear-gradient(90deg,#FF8A3D,#F6D24D);
+                  -webkit-background-clip:text;color:transparent}
+  .tm-track-artist{font-size:15px;color:#374151;margin:6px 0}
+  .tm-track-reason{font-size:14px;color:#6b7280;margin-top:6px}
+</style>

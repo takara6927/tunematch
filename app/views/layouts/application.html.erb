@@ -8,7 +8,7 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+    <%#= javascript_pack_tag 'application', 'data-turbolinks-track': ' reload' %>
     <%= yield :head %>
   </head>
 
@@ -45,7 +45,6 @@
     <footer class="site-footer">
       <div class="container">
         <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-          <span>© <%= Time.current.year %> TuneMatch</span>
           <span>Made with <span title="teal">💚</span></span>
         </div>
       </div>

@@ -1,55 +1,135 @@
-<section>
-  <h1>TuneMatch とは？</h1>
-  <p>たった20問の「はい / いいえ」で、いまのあなたの気分に合うアーティストと曲をレコメンドする診断サイトです。</p>
-  <div>
-    <%= link_to "診断をはじめる", diagnoses_start_path %>
-  </div>
-</section>
-
-<section>
-  <h2>使い方</h2>
-  <ol>
-    <li>「診断をはじめる」を押して質問ページへ進みます。</li>
-    <li>20問の質問に <span>はい</span> / <span>いいえ</span> で答えます。</li>
-    <li>回答結果から<strong>おすすめの曲を2曲とアーティスト名</strong>を表示します（YouTubeリンクつき）。</li>
-    <li>気に入らなかったら、もう一度診断もOK！</li>
-  </ol>
-</section>
-
-<section>
-  <h2>アカウント</h2>
-  <% if user_signed_in? %>
-    <p>ログイン中です。自分のおすすめの曲をみんなに共有できます。</p>
-    <div>
-      <%= link_to "おすすめ曲を投稿する", new_tweet_path %>
-      <%= link_to "ログアウト", destroy_user_session_path,
-                  data: { turbo_method: :delete, confirm: "ログアウトしますか？" } %>
+<div class="tm-wrap">
+  <header class="tm-hero tm-card">
+    <p class="tm-eyebrow">About</p>
+    <h1 class="tm-title">TuneMatch とは？</h1>
+    <p class="tm-lead">
+      20の質問に答えるだけで、あなたの気分や好みから
+      <span class="tm-gradient-text">ぴったりの曲</span>を見つける音楽診断アプリです。
+    </p>
+    <div class="tm-cta">
+      <%= link_to "いますぐ診断をはじめる", diagnoses_start_path, class: "tm-btn" %>
     </div>
-  <% else %>
-    <p>ログインすると、自分のおすすめ曲の投稿やみんなの投稿へのいいねが使えます。</p>
-    <div>
-      <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline-primary" %>
-      <%= link_to "新規登録", new_user_registration_path, class: "btn btn-primary" %>
+  </header>
+
+  <section class="tm-section">
+    <h2 class="tm-h2">使い方</h2>
+    <ol class="tm-steps">
+      <li>
+        <span class="tm-step">1</span>
+        <div><strong>「診断をはじめる」</strong> を押して質問ページへ進みます。</div>
+      </li>
+      <li>
+        <span class="tm-step">2</span>
+        <div>20問の質問に <span class="tm-kbd">はい</span> / <span class="tm-kbd">いいえ</span> で答えます。</div>
+      </li>
+      <li>
+        <span class="tm-step">3</span>
+        <div>おすすめの曲 <strong>2曲（アーティスト名＋曲名）</strong> を表示します（YouTubeリンクつき）。</div>
+      </li>
+      <li>
+        <span class="tm-step">4</span>
+        <div>気に入ったら、もう一度診断もOK。</div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="tm-section">
+    <h2 class="tm-h2">アカウント</h2>
+    <% if user_signed_in? %>
+      <p>ログイン中です。自分のおすすめの曲をみんなに共有できます。</p>
+      <div class="tm-actions">
+        <%= link_to "おすすめ曲を投稿する", new_tweet_path, class: "tm-btn tm-btn--ghost" %>
+        <%= link_to "ログアウト", destroy_user_session_path,
+              data: { turbo_method: :delete, confirm: "ログアウトしますか？" },
+              class: "tm-link-danger" %>
+      </div>
+    <% else %>
+      <p>ログインすると、自分のおすすめ曲の投稿やみんなの投稿へのいいねが使えます。</p>
+      <div class="tm-actions">
+        <%= link_to "ログイン", new_user_session_path, class: "tm-btn tm-btn--outline" %>
+        <%= link_to "新規登録", new_user_registration_path, class: "tm-btn" %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="tm-section">
+    <h2 class="tm-h2">よくある質問</h2>
+
+    <details class="tm-faq">
+      <summary>診断にかかる時間はどれくらい？</summary>
+      <div>20問なので1〜2分で終わります。迷ったら直感でOK。</div>
+    </details>
+
+    <details class="tm-faq">
+      <summary>診断の正確さは？</summary>
+      <div>この診断はユーザーの解答結果を <strong>4軸（気分・雰囲気・こだわり・ジャンル）</strong> のスコアで判定しています。</div>
+    </details>
+
+    <details class="tm-faq">
+      <summary>個人情報は保存される？</summary>
+      <div>診断の回答は匿名で処理され、個人を特定する情報は保存しません。</div>
+    </details>
+
+    <details class="tm-faq">
+      <summary>結果を後で見返せますか？</summary>
+      <div>ログインしていれば、診断結果は履歴に保存され、いつでも見返せます。</div>
+    </details>
+  </section>
+
+  <section class="tm-section tm-section--cta">
+    <div class="tm-card tm-card--cta">
+      <p class="tm-cta-copy">さあ、あなたに合う音楽を見つけよう。</p>
+      <%= link_to "いますぐ診断をはじめる", diagnoses_start_path, class: "tm-btn" %>
     </div>
-  <% end %>
-</section>
+  </section>
+</div>
 
-<section>
-  <h2>よくある質問</h2>
-  <details>
-    <summary>診断にかかる時間はどれくらい？</summary>
-    <div>20問なので1〜2分で終わります。迷ったら直感でOK</div>
-  </details>
-  <details>
-    <summary>診断の正確さは？</summary>
-    <div>この診断はユーザーの解答結果を4軸（気分・雰囲気・こだわり・ジャンル）のスコアで判定しています。</div>
-  </details>
-  <details>
-    <summary>個人情報は保存される？</summary>
-    <div>診断の回答は匿名で処理され、個人を特定する情報は保存しません。</div>
-  </details>
-</section>
+<style>
+  .tm-wrap{max-width:960px;margin:40px auto;padding:0 16px}
 
-<section>
-  <%= link_to "いますぐ診断をはじめる", diagnoses_start_path %>
-</section>
+  .tm-card{background:#fff;border:1px solid rgba(31,41,55,.08);border-radius:20px;box-shadow:0 10px 28px rgba(31,41,55,.12)}
+  .tm-hero{padding:28px 22px;background:
+      radial-gradient(900px 500px at -10% -10%, rgba(46,202,195,.22), transparent 55%),
+      radial-gradient(800px 480px at 110% 0%, rgba(246,210,77,.22), transparent 55%),
+      linear-gradient(180deg,#ffffff,#fbfbfb)}
+  .tm-eyebrow{font-size:12px;letter-spacing:.12em;font-weight:800;color:#64748b;text-transform:uppercase;margin:0 0 6px}
+  .tm-title{font-size:clamp(24px,3vw,32px);margin:0 0 6px;font-weight:900;color:#0f172a}
+  .tm-lead{margin:0 0 14px;color:#374151}
+  .tm-gradient-text{background:linear-gradient(90deg,#2ECAC3,#FF8A3D 70%,#F6D24D);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .tm-cta{margin-top:6px;text-align:left}
+
+  .tm-section{margin-top:22px}
+  .tm-h2{font-size:18px;font-weight:900;margin:0 0 10px;
+         background:linear-gradient(90deg,#111827,#374151);
+         -webkit-background-clip:text;color:transparent}
+
+  .tm-steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .tm-steps li{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid rgba(31,41,55,.06);
+               padding:12px;border-radius:14px}
+  .tm-step{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;
+           background:linear-gradient(180deg,#2ECAC3,#1fb5ae);color:#fff;font-weight:900}
+  .tm-kbd{display:inline-block;padding:2px 6px;border-radius:8px;background:#f3f4f6;border:1px solid #e5e7eb}
+
+  .tm-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  .tm-link-danger{color:#dc2626;font-weight:800;text-decoration:underline}
+
+  .tm-faq{background:#fff;border:1px solid rgba(31,41,55,.08);border-radius:12px;padding:10px 12px;margin:8px 0}
+  .tm-faq > summary{cursor:pointer;font-weight:800;list-style:none}
+  .tm-faq > summary::-webkit-details-marker{display:none}
+  .tm-faq[open]{box-shadow:0 8px 20px rgba(31,41,55,.10)}
+  .tm-faq[open] > summary{color:#0f172a}
+  .tm-faq > div{margin-top:8px;color:#374151}
+
+  .tm-section--cta{margin-top:28px}
+  .tm-card--cta{padding:18px;text-align:center;background:
+      radial-gradient(700px 380px at 110% -10%, rgba(255,138,61,.20), transparent 55%),
+      radial-gradient(700px 380px at -10% 110%, rgba(46,202,195,.18), transparent 55%),
+      #fff}
+
+  .tm-btn{display:inline-block;background:linear-gradient(180deg,#2ECAC3,#1fb5ae);color:#fff;
+          text-decoration:none;font-weight:900;padding:12px 22px;border-radius:14px;transition:transform .06s ease, box-shadow .2s ease}
+  .tm-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(46,202,195,.35)}
+  .tm-btn--outline{background:#fff;color:#0f172a;border:2px solid #e5e7eb}
+  .tm-btn--ghost{background:#fff;color:#2ECAC3;border:2px solid #2ECAC3}
+</style>

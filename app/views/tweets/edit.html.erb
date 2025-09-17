@@ -1,50 +1,137 @@
-<h1>Tweetを編集</h1>
+<h1 class="tw-page-title">Tweetを編集</h1>
 
-<% if @tweet.errors.any? %>
-  <div>
-    <strong><%= @tweet.errors.count %>件のエラーがあります:</strong>
-    <ul>
-      <% @tweet.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
-    </ul>
-  </div>
-<% end %>
+<div class="tw-wrap">
+  <%= form_with model: @tweet, local: true, class: "tw-card tw-form" do |f| %>
+    <% if @tweet.errors.any? %>
+      <div class="tw-alert" role="alert">
+        <strong><%= @tweet.errors.count %>件のエラーがあります：</strong>
+        <ul>
+          <% @tweet.errors.full_messages.each do |m| %>
+            <li><%= m %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-<%= form_for @tweet do |f| %>
-  <% if @tweet.respond_to?(:artist) %>
-    <div>
-      <%= f.label :artist, "アーティスト名（必須）" %><br>
-      <%= f.text_field :artist, class: "input", required: true %>
+    <div class="tw-grid">
+      <div class="tw-field">
+        <%= f.label :artist, "アーティスト名（必須）", class: "tw-label" %>
+        <%= f.text_field :artist, required: true, class: "tw-input" %>
+      </div>
+
+      <div class="tw-field">
+        <%= f.label :title, "曲名（必須）", class: "tw-label" %>
+        <%= f.text_field :title, required: true, class: "tw-input" %>
+      </div>
+    </div>
+
+    <div class="tw-field">
+      <%= f.label :body, "おすすめ理由 / コメント（必須）", class: "tw-label" %>
+      <%= f.text_area :body, rows: 5, required: true, class: "tw-textarea" %>
+    </div>
+
+
+    <div class="tw-field">
+      <div class="tw-label">タグ（複数選択可）</div>
+      <div class="tw-tags">
+        <%= f.collection_check_boxes(:tag_ids, @all_tags, :id, :name) do |tag| %>
+          <label class="tw-chip">
+            <%= tag.check_box %>
+            <span>#<%= tag.text %></span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="tw-actions">
+      <%= f.submit "更新する", class: "tw-btn" %>
+      <%= link_to "キャンセル", tweet_path(@tweet), class: "tw-btn tw-btn--ghost" %>
     </div>
   <% end %>
 
-  <% if @tweet.respond_to?(:title) %>
-    <div>
-      <%= f.label :title, "曲名（必須）" %><br>
-      <%= f.text_field :title, class: "input", required: true %>
-    </div>
-  <% end %>
 
-  <div>
-    <%= f.label :body, "おすすめ理由 / コメント（必須）" %><br>
-    <%= f.text_area :body, rows: 5, class: "input", required: true %>
+  <div class="tw-danger">
+    <%= button_to "投稿を削除する",
+          tweet_path(@tweet),
+          method: :delete,
+          data: { turbo_confirm: "削除しますか？" },
+          class: "tw-btn tw-btn--ghost tw-btn--danger" %>
   </div>
+</div>
 
-  <% if @tweet.respond_to?(:youtube_url) %>
-    <div>
-      <%= f.label :youtube_url, "YouTube URL（任意）" %><br>
-      <%= f.text_field :youtube_url, class: "input", placeholder: "https://www.youtube.com/watch?v=..." %>
-    </div>
-  <% end %>
+<style>
 
-  <div>
-    <%= f.label :tag_ids, "タグ（複数選択可）" %>
-    <div>
-      <%= f.collection_check_boxes(:tag_ids, @all_tags, :id, :name) do |tag| %>
-        <label><%= tag.check_box %><%= tag.text %></label>
-      <% end %>
-    </div>
-  </div>
+  :root{
+    --text:#0f172a; --muted:#64748b; --card:#fff; --line:#e5e7eb;
+    --g1:#2ECAC3; --g2:#FF8A3D; --g3:#F6D24D;
+    --bg1:rgba(46,202,195,.18); --bg2:rgba(246,210,77,.18);
+  }
 
-  <%= f.submit "更新する", class: "btn" %>
-  <%= link_to "キャンセル", tweet_path(@tweet), class: "link"%>
-<% end %>
+  .tw-wrap{max-width:860px;margin:0 auto;padding:0 16px}
+
+  .tw-page-title{
+    font-weight:900;font-size:clamp(22px,3vw,28px);margin:18px 0;
+    background:linear-gradient(90deg,var(--g1),var(--g2) 70%,var(--g3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+
+  .tw-card{
+    background:
+      radial-gradient(700px 380px at 110% -10%, var(--bg2), transparent 55%),
+      radial-gradient(700px 380px at -10% 110%, var(--bg1), transparent 55%),
+      var(--card);
+    border:1px solid rgba(31,41,55,.08);
+    border-radius:18px;padding:18px;
+    box-shadow:0 12px 28px rgba(17,24,39,.12);
+  }
+
+  .tw-form{margin-top:8px}
+  .tw-grid{display:grid;gap:12px}
+  @media (min-width:640px){ .tw-grid{grid-template-columns:1fr 1fr} }
+
+  .tw-field{margin:12px 0}
+  .tw-label{display:block;font-weight:800;margin:0 0 6px}
+  .tw-input,.tw-textarea{
+    width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+    background:#fff;outline:none;transition:border-color .15s, box-shadow .15s
+  }
+  .tw-input:focus,.tw-textarea:focus{
+    border-color:#93c5fd; box-shadow:0 0 0 3px rgba(147,197,253,.35)
+  }
+  .tw-textarea{min-height:120px;line-height:1.6}
+
+  .tw-alert{
+    background:#fff8f0;border:1px solid #fdba74;color:#7c2d12;
+    border-radius:12px;padding:12px;margin-bottom:10px
+  }
+  .tw-alert ul{margin:6px 0 0 16px}
+
+
+  .tw-tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tw-chip{display:inline-flex;align-items:center;border-radius:999px;position:relative}
+  .tw-chip input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+  .tw-chip span{
+    display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--line);background:#f3f4f6;color:#0f172a;
+    border-radius:999px;padding:6px 10px;font-size:14px;transition:all .15s
+  }
+  .tw-chip input:checked + span{
+    border-color:#fecaca;color:#b91c1c;background:#fff;
+    box-shadow:0 4px 12px rgba(185,28,28,.12)
+  }
+
+  .tw-actions{display:flex;gap:10px;margin-top:12px}
+  .tw-danger{margin-top:16px}
+  .tw-btn{
+    background-image:linear-gradient(90deg,var(--g1),var(--g2));
+    background-size:200% 100%;background-position:0% 50%;
+    color:#fff;display:inline-flex;align-items:center;gap:8px;
+    padding:10px 14px;border:none;border-radius:12px;
+    font-weight:900;text-decoration:none;
+    box-shadow:0 6px 16px rgba(31,41,55,.16);
+    transition:background-position .35s,transform .06s,box-shadow .2s,filter .2s;
+  }
+  .tw-btn:hover{background-position:100% 50%;filter:brightness(1.03);transform:translateY(-1px);box-shadow:0 12px 26px rgba(31,41,55,.22)}
+  .tw-btn--ghost{background:#fff;color:var(--text);border:2px solid var(--line)}
+  .tw-btn--danger{color:#b91c1c;border-color:#fecaca}
+</style>

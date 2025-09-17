@@ -4,18 +4,14 @@
 <% share_text = "TuneMatchで「#{title_for_share}」の結果でした。#{local_assigns[:summary].to_s.truncate(60)}" %>
 
 <div>
-  <!-- X(Twitter) -->
   <a href="https://twitter.com/intent/tweet?text=<%= ERB::Util.url_encode(share_text) %>&url=<%= ERB::Util.url_encode(share_url) %>"
      target="_blank" rel="noopener">Xでシェア</a>
 
-  <!-- LINE -->
   <a href="https://social-plugins.line.me/lineit/share?url=<%= ERB::Util.url_encode(share_url) %>"
      target="_blank" rel="noopener">LINEでシェア</a>
 
-  <!-- コピー -->
   <button id="copy-link">リンクをコピー</button>
 
-  <!-- Web Share API -->
   <button id="web-share">端末で共有</button>
 </div>
 

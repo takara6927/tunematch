@@ -1,0 +1,76 @@
+<div class="tm-form-card">
+  <% if @tweet.errors.any? %>
+    <div class="tm-errors">
+      <p><strong><%= @tweet.errors.count %>件のエラーがあります：</strong></p>
+      <ul>
+        <% @tweet.errors.full_messages.each do |m| %>
+          <li><%= m %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_for @tweet do |f| %>
+    <% if @tweet.respond_to?(:artist) %>
+      <div class="tm-field">
+        <%= f.label :artist, "アーティスト名（必須）", class: "tm-label" %>
+        <%= f.text_field :artist, class: "tm-input", required: true %>
+      </div>
+    <% end %>
+
+    <% if @tweet.respond_to?(:title) %>
+      <div class="tm-field">
+        <%= f.label :title, "曲名（必須）", class: "tm-label" %>
+        <%= f.text_field :title, class: "tm-input", required: true %>
+      </div>
+    <% end %>
+
+    <div class="tm-field">
+      <%= f.label :body, "おすすめ理由 / コメント（必須）", class: "tm-label" %>
+      <%= f.text_area :body, rows: 5, class: "tm-input", required: true %>
+    </div>
+
+    <% if @tweet.respond_to?(:youtube_url) %>
+      <div class="tm-field">
+        <%= f.label :youtube_url, "YouTube URL（任意）", class: "tm-label" %>
+        <%= f.text_field :youtube_url, class: "tm-input", placeholder: "https://www.youtube.com/watch?v=..." %>
+      </div>
+    <% end %>
+
+    <div class="tm-field">
+      <%= f.label :tag_ids, "タグ（複数選択可）", class: "tm-label" %>
+      <div class="tm-tags">
+        <%= f.collection_check_boxes(:tag_ids, @all_tags, :id, :name) do |tag| %>
+          <label class="tm-tag">
+            <%= tag.check_box %> <%= tag.text %>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="tm-actions">
+      <%= f.submit (@tweet.persisted? ? "更新する" : "投稿する"), class: "tm-btn" %>
+      <% if @tweet.persisted? %>
+        <%= link_to "キャンセル", tweet_path(@tweet), class: "tm-link-cancel" %>
+      <% else %>
+        <%= link_to "キャンセル", tweets_path, class: "tm-link-cancel" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .tm-form-card{background:#fff;border-radius:18px;padding:24px;border:1px solid #e5e7eb;box-shadow:0 8px 18px rgba(17,24,39,.08);max-width:720px;margin:20px auto}
+  .tm-errors{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:12px;padding:12px 16px;margin-bottom:16px}
+  .tm-errors ul{margin:8px 0 0 20px;padding:0}
+  .tm-field{margin-bottom:18px}
+  .tm-label{display:block;font-weight:800;margin-bottom:6px;color:#0f172a}
+  .tm-input{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
+  .tm-input:focus{outline:none;border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.25)}
+  .tm-tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tm-tag{background:#f3f4f6;border:1px solid #e5e7eb;border-radius:999px;padding:6px 10px;font-size:14px;cursor:pointer}
+  .tm-actions{display:flex;gap:12px;align-items:center;margin-top:8px}
+  .tm-btn{background:#0ea5e9;color:#fff;font-weight:900;border:none;border-radius:12px;padding:12px 20px;cursor:pointer}
+  .tm-btn:hover{background:#0284c7}
+  .tm-link-cancel{color:#6b7280;text-decoration:underline}
+</style>
