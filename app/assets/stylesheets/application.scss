@@ -153,7 +153,7 @@ html,body{height:100%;background:var(--bg);color:var(--fg);
 }
 
 .callout__art{
-  background: #fff !important; 
+  background: transparent; /* ← 背景を透明に */
   border: 1px solid rgba(31,41,55,.15);
   border-radius: 16px;
   position: relative;
@@ -161,18 +161,24 @@ html,body{height:100%;background:var(--bg);color:var(--fg);
   display: grid;
   place-items: center;
 }
-@media (min-width:960px){.callout__art{height:280px}}
+
+@media (min-width:960px){
+  .callout__art{
+    height:280px;
+  }
+}
+
 .callout__art::before,
 .callout__art::after {
-  display: none; 
+  display: none;
 }
 
 .callout__art img{
-  position:relative;
-  z-index:1;
-  max-width:85%;
-  max-height:85%;
-  object-fit:contain;
+  position: relative;
+  z-index: 1;
+  max-width: 85%;
+  max-height: 85%;
+  object-fit: contain;
 }
 
 .callout__content h2{font-size:22px;line-height:1.35;font-weight:900;margin-bottom:8px}
