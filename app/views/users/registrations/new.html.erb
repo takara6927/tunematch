@@ -1,34 +1,115 @@
-<h2>Sign up</h2>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h2 class="auth-title">新規登録</h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "users/shared/error_messages", resource: resource %>
-　
-　<div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name, autofocus: true %>
-  </div>
-  
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "auth-form" }) do |f| %>
+      <%= render "users/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
+      <div class="auth-field">
+        <%= f.label :name, "ユーザー名", class: "auth-label" %>
+        <%= f.text_field :name, autofocus: true, class: "auth-input" %>
+      </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+      <div class="auth-field">
+        <%= f.label :email, "メールアドレス", class: "auth-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "auth-input" %>
+      </div>
 
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
+      <div class="auth-field">
+        <%= f.label :password, "パスワード", class: "auth-label" %>
+        <% if @minimum_password_length %>
+          <span class="auth-hint">（<%= @minimum_password_length %>文字以上）</span>
+        <% end %>
+        <%= f.password_field :password, autocomplete: "new-password", class: "auth-input" %>
+      </div>
 
-<%= render "users/shared/links" %>
+      <div class="auth-field">
+        <%= f.label :password_confirmation, "パスワード（確認用）", class: "auth-label" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "auth-input" %>
+      </div>
+
+      <div class="auth-actions">
+        <%= f.submit "登録する", class: "tw-btn" %>
+      </div>
+    <% end %>
+
+    <div class="auth-links">
+      <%= render "users/shared/links" %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .auth-wrap {
+    max-width: 480px;
+    margin: 50px auto;
+    padding: 0 16px;
+  }
+
+  .auth-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 10px 26px rgba(17,24,39,.12);
+    border: 1px solid rgba(31,41,55,.08);
+  }
+
+  .auth-title {
+    margin: 0 0 24px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 26px;
+    background: linear-gradient(90deg,var(--g1),var(--g2) 70%,var(--g3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .auth-label {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  .auth-input {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 15px;
+  }
+
+  .auth-input:focus {
+    outline: none;
+    border-color: var(--g1);
+    box-shadow: 0 0 0 3px rgba(46,202,195,.25);
+  }
+
+  .auth-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+
+  .auth-actions {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .auth-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+  }
+</style>

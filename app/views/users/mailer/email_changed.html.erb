@@ -1,7 +1,22 @@
-<p>Hello <%= @email %>!</p>
+<p><strong><%= @email %></strong> 様</p>
 
 <% if @resource.try(:unconfirmed_email?) %>
-  <p>We're contacting you to notify you that your email is being changed to <%= @resource.unconfirmed_email %>.</p>
+  <p>
+    登録メールアドレスを変更する手続きが開始されました。<br>
+    新しいメールアドレス: <strong><%= @resource.unconfirmed_email %></strong>
+  </p>
+  <p>
+    この変更に心当たりがない場合は、ただちに運営までご連絡ください。
+  </p>
 <% else %>
-  <p>We're contacting you to notify you that your email has been changed to <%= @resource.email %>.</p>
+  <p>
+    登録メールアドレスが次の内容に更新されました。<br>
+    新しいメールアドレス: <strong><%= @resource.email %></strong>
+  </p>
+  <p>
+    この変更に心当たりがない場合は、ただちにパスワードを変更し、運営までご連絡ください。
+  </p>
 <% end %>
+
+<p>ご利用ありがとうございます。<br>
+<strong>TuneMatch 運営チーム</strong></p>

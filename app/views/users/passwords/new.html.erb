@@ -1,16 +1,100 @@
-<h2>Forgot your password?</h2>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h2 class="auth-title">パスワード再設定</h2>
+    <p class="auth-desc">登録したメールアドレスを入力してください。<br>再設定用のリンクをメールでお送りします。</p>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "users/shared/error_messages", resource: resource %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "auth-form" }) do |f| %>
+      <%= render "users/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      <div class="auth-field">
+        <%= f.label :email, "メールアドレス", class: "auth-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "auth-input" %>
+      </div>
+
+      <div class="auth-actions">
+        <%= f.submit "再設定メールを送信", class: "tw-btn" %>
+      </div>
+    <% end %>
+
+    <div class="auth-links">
+      <%= render "users/shared/links" %>
+    </div>
   </div>
+</div>
 
-  <div class="actions">
-    <%= f.submit "Send me reset password instructions" %>
-  </div>
-<% end %>
+<style>
+  .auth-wrap {
+    max-width: 480px;
+    margin: 50px auto;
+    padding: 0 16px;
+  }
 
-<%= render "users/shared/links" %>
+  .auth-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 10px 26px rgba(17,24,39,.12);
+    border: 1px solid rgba(31,41,55,.08);
+  }
+
+  .auth-title {
+    margin: 0 0 16px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 26px;
+    background: linear-gradient(90deg,var(--g1),var(--g2) 70%,var(--g3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .auth-desc {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .auth-label {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  .auth-input {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 15px;
+  }
+
+  .auth-input:focus {
+    outline: none;
+    border-color: var(--g1);
+    box-shadow: 0 0 0 3px rgba(46,202,195,.25);
+  }
+
+  .auth-actions {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .auth-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+  }
+</style>

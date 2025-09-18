@@ -1,7 +1,6 @@
-
 <div class="u-show">
 
-  <header class="u-show__hero">
+  <header class="u-show__hero card">
     <div class="u-show__avatar">
       <% if @user.image&.attached? %>
         <%= image_tag @user.image, class: "u-show__avatar-img", alt: @user.name %>
@@ -23,29 +22,15 @@
     </div>
   </header>
 
-
   <section class="card u-show__card">
     <h3 class="card__title">サマリー</h3>
     <ul class="stats">
-      <li class="stats__item">
-        <span class="stats__label">投稿数</span>
-        <span class="stats__value"><%= @stats[:posts_count] %></span>
-      </li>
-      <li class="stats__item">
-        <span class="stats__label">もらった いいね</span>
-        <span class="stats__value"><%= @stats[:likes_received] %></span>
-      </li>
-      <li class="stats__item">
-        <span class="stats__label">おした いいね</span>
-        <span class="stats__value"><%= @stats[:likes_given] %></span>
-      </li>
-      <li class="stats__item">
-        <span class="stats__label">参加日</span>
-        <span class="stats__value"><%= l @stats[:joined_on], format: :short %></span>
-      </li>
+      <li><span class="stats__label">投稿数</span><span class="stats__value"><%= @stats[:posts_count] %></span></li>
+      <li><span class="stats__label">もらった いいね</span><span class="stats__value"><%= @stats[:likes_received] %></span></li>
+      <li><span class="stats__label">おした いいね</span><span class="stats__value"><%= @stats[:likes_given] %></span></li>
+      <li><span class="stats__label">参加日</span><span class="stats__value"><%= l @stats[:joined_on], format: :short %></span></li>
     </ul>
   </section>
-
 
   <% if user_signed_in? && current_user.id == @user.id %>
     <section class="card u-show__card">
@@ -57,13 +42,11 @@
       </div>
 
       <% if @diagnoses.present? %>
-        <ul class="list list--dense">
+        <ul class="list">
           <% @diagnoses.each do |d| %>
             <li class="list__item">
               <div class="list__meta"><%= l d.created_at, format: :short %></div>
-              <div class="list__actions">
-                <%= link_to "診断結果", diagnosis_path(d), class: "link" %>
-              </div>
+              <%= link_to "診断結果を見る", diagnosis_path(d), class: "link" %>
             </li>
           <% end %>
         </ul>
@@ -73,7 +56,6 @@
       <% end %>
     </section>
   <% end %>
-
 
   <% if @top_tags.present? %>
     <section class="card u-show__card">
@@ -86,14 +68,12 @@
     </section>
   <% end %>
 
-
   <nav class="tabnav u-show__card">
     <%= link_to "投稿", user_path(@user, tab: "posts"),
       class: "tabnav__tab #{params[:tab] == 'likes' ? '' : 'is-active'}" %>
     <%= link_to "いいね", user_path(@user, tab: "likes"),
       class: "tabnav__tab #{params[:tab] == 'likes' ? 'is-active' : ''}" %>
   </nav>
-
 
   <section class="u-show__list">
     <% if @tweets.blank? %>
@@ -102,18 +82,18 @@
       <% @tweets.each do |t| %>
         <article class="card tweet">
           <div class="tweet__meta">
-            <span class="tweet__time"><%= l t.created_at, format: :short %></span>
-            <span class="tweet__user"><%= t.user&.name || t.user&.email %></span>
+            <span><%= l t.created_at, format: :short %></span>
+            <span><%= t.user&.name || t.user&.email %></span>
           </div>
 
-          <% if t.respond_to?(:artist) && t.respond_to?(:title) && (t.artist.present? || t.title.present?) %>
+          <% if t.artist.present? || t.title.present? %>
             <div class="tweet__song"><strong><%= t.artist %></strong> ― <%= t.title %></div>
           <% end %>
 
           <p class="tweet__body"><%= t.body %></p>
 
           <% if t.tags.present? %>
-            <div class="chips chips--soft">
+            <div class="chips">
               <% t.tags.each do |tag| %>
                 <span class="chip">#<%= tag.name %></span>
               <% end %>
@@ -121,13 +101,11 @@
           <% end %>
 
           <div class="tweet__actions">
-            <span class="likecount">❤︎ <%= t.likes.count %></span>
+            <span>❤︎ <%= t.likes.count %></span>
             <%= link_to "詳細", tweet_path(t), class: "btn btn--ghost" %>
-
             <% if user_signed_in? && current_user.id == t.user_id %>
               <%= link_to "編集", edit_tweet_path(t), class: "btn btn--ghost" %>
-              <%= link_to "削除", tweet_path(t),
-                    class: "btn btn--danger",
+              <%= link_to "削除", tweet_path(t), class: "btn btn--danger",
                     data: { turbo_method: :delete, turbo_confirm: "削除しますか？" } %>
             <% end %>
           </div>
@@ -135,8 +113,8 @@
       <% end %>
 
       <div class="pagination">
-        <div class="pagination__info"><%= page_entries_info @tweets %></div>
-        <div class="pagination__links"><%= paginate @tweets %></div>
+        <%= page_entries_info @tweets %><br>
+        <%= paginate @tweets %>
       </div>
     <% end %>
   </section>
@@ -145,3 +123,77 @@
     <%= link_to "← みんなの投稿一覧へ", tweets_path, class: "link" %>
   </div>
 </div>
+
+<style>
+:root {
+  --g1:#2ECAC3; --g3:#F6D24D;
+  --text:#0f172a; --muted:#64748b; --card:#fff;
+}
+
+.u-show {max-width:900px;margin:32px auto;padding:0 16px}
+.card {
+  background: var(--card);
+  border-radius:16px;padding:16px;margin-bottom:16px;
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+}
+.card__title {font-weight:900;margin-bottom:10px;font-size:18px;color:var(--text);}
+.btn {
+  padding:8px 14px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:900;
+  transition:.25s;
+}
+.btn--primary {background:var(--g1);color:#fff}
+.btn--ghost {border:1px solid #ddd;color:var(--text);background:#fff}
+.btn--danger {background:#ef4444;color:#fff}
+.btn:hover {filter:brightness(1.05);transform:translateY(-1px)}
+.link {color:var(--g1);text-decoration:underline;font-weight:600}
+.muted {color:var(--muted)}
+
+.stats {display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;padding:0;list-style:none}
+.stats__label {font-size:13px;color:var(--muted)}
+.stats__value {font-weight:900;font-size:18px;color:var(--text)}
+
+.u-show__hero {display:flex;gap:16px;align-items:center}
+.u-show__avatar-img {width:72px;height:72px;border-radius:50%;object-fit:cover}
+.u-show__avatar-fallback {
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--g1),var(--g3));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:24px;color:#fff
+}
+.u-show__name {
+  font-size:24px;font-weight:900;
+  background:linear-gradient(90deg,var(--g1),var(--g3));
+  -webkit-background-clip:text;color:transparent
+}
+.u-show__meta,.u-show__profile {color:var(--text)}
+
+.tabnav {display:flex;gap:8px}
+.tabnav__tab {
+  flex:1;text-align:center;padding:10px;border:1px solid #ddd;
+  border-radius:10px;text-decoration:none;color:var(--text);font-weight:600
+}
+.tabnav__tab.is-active {
+  background:linear-gradient(90deg,var(--g1),var(--g3));color:#fff
+}
+
+.chips {display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip {
+  background:rgba(46,202,195,.15);
+  border-radius:999px;padding:4px 10px;font-size:13px;
+  font-weight:600;color:var(--text)
+}
+.chip__count {margin-left:4px;color:var(--muted)}
+
+.tweet {margin-bottom:12px}
+.tweet__meta {font-size:13px;color:var(--muted);display:flex;justify-content:space-between}
+.tweet__song {font-weight:900;margin:6px 0;color:var(--text)}
+.tweet__body {margin:6px 0;color:var(--text)}
+.tweet__actions {display:flex;gap:10px;align-items:center;margin-top:8px}
+.pagination {text-align:center;color:var(--muted);margin-top:14px}
+
+.u-show__back {margin-top:20px;text-align:center}
+</style>
+

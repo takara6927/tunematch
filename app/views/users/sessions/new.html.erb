@@ -1,27 +1,121 @@
-<h2>ログイン</h2>
-<p>※登録したメールアドレスとパスワードを入力してください。</p>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h2 class="auth-title">ログイン</h2>
+    <p class="auth-desc">登録したメールアドレスとパスワードを入力してください。</p>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <h2>メール </h2><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "auth-form" }) do |f| %>
+      <div class="auth-field">
+        <%= f.label :email, "メールアドレス", class: "auth-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "auth-input" %>
+      </div>
 
-  <div class="field">
-    <h2>パスワード </h2><br />
-    <%= f.password_field :password, autocomplete: "off" %>
-  </div>
+      <div class="auth-field">
+        <%= f.label :password, "パスワード", class: "auth-label" %>
+        <%= f.password_field :password, autocomplete: "off", class: "auth-input" %>
+      </div>
 
-  <% if devise_mapping.rememberable? -%>
-    <div class="field">
-      <%= f.check_box :remember_me %>
-      <h2>私を覚える</h2>
+      <% if devise_mapping.rememberable? -%>
+        <div class="auth-remember">
+          <%= f.check_box :remember_me, class: "auth-checkbox" %>
+          <%= f.label :remember_me, "ログイン状態を保持する", class: "auth-remember-label" %>
+        </div>
+      <% end -%>
+
+      <div class="auth-actions">
+        <%= f.submit "ログイン", class: "tw-btn" %>
+      </div>
+    <% end %>
+
+    <div class="auth-links">
+      <%= render "users/shared/links" %>
     </div>
-  <% end -%>
-
-  <div class="actions">
-    <%= f.submit "Log in" %>
   </div>
-<% end %>
+</div>
 
-<%= render "users/shared/links" %>
+<style>
+  .auth-wrap {
+    max-width: 480px;
+    margin: 50px auto;
+    padding: 0 16px;
+  }
+
+  .auth-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 10px 26px rgba(17,24,39,.12);
+    border: 1px solid rgba(31,41,55,.08);
+  }
+
+  .auth-title {
+    margin: 0 0 16px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 26px;
+    background: linear-gradient(90deg,var(--g1),var(--g2) 70%,var(--g3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .auth-desc {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .auth-label {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  .auth-input {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 15px;
+  }
+
+  .auth-input:focus {
+    outline: none;
+    border-color: var(--g1);
+    box-shadow: 0 0 0 3px rgba(46,202,195,.25);
+  }
+
+  .auth-remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .auth-remember-label {
+    cursor: pointer;
+  }
+
+  .auth-actions {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .auth-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+  }
+</style>

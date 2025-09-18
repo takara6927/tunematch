@@ -4,7 +4,6 @@
     <%= link_to "＋ 新規投稿", new_tweet_path, class: "tw-btn" %>
   </header>
 
-
   <section class="tw-card tw-search">
     <%= form_tag({controller: "tweets", action: "index"}, method: :get, class: "tw-search__form") do %>
       <%= text_field_tag :search, @q, placeholder: "アーティスト名・曲名・本文で検索", class: "tw-input" %>
@@ -12,7 +11,6 @@
       <%= link_to "リセット", tweets_path, class: "tw-btn tw-btn--ghost" %>
     <% end %>
   </section>
-
 
   <section class="tw-card tw-filter">
     <h2 class="tw-h2">タグで絞り込む</h2>
@@ -69,7 +67,15 @@
             <header class="tw-tweet__head">
               <div class="tw-user">
                 <% name = (t.user&.name.presence || t.user&.email || "ユーザー") %>
-                <div class="tw-avatar"><%= name.to_s[0].to_s.upcase %></div>
+                <div class="tw-avatar">
+                  <% if t.user&.image&.attached? %>
+                    <%= image_tag t.user.image,
+                          alt: name,
+                          style: "width:38px;height:38px;border-radius:50%;object-fit:cover;" %>
+                  <% else %>
+                    <%= name.to_s[0].upcase %>
+                  <% end %>
+                </div>
                 <div class="tw-user__meta">
                   <div class="tw-user__name"><%= name %></div>
                   <div class="tw-user__date"><%= l t.created_at, format: :short %></div>
@@ -79,7 +85,6 @@
               <% if user_signed_in? && current_user.id == t.user_id %>
                 <nav class="tw-actions">
                   <%= link_to "編集", edit_tweet_path(t), class: "tw-btn tw-btn--sm tw-btn--ghost" %>
-
                   <%= button_to "削除",
                         tweet_path(t),
                         method: :delete,
@@ -169,99 +174,59 @@
   }
 
   .tw-btn{
-  
-  --twg1: var(--g1);
-  --twg2: var(--g2);
-
-  background-image: linear-gradient(90deg, var(--twg1), var(--twg2));
-  background-size: 200% 100%;        
-  background-position: 0% 50%;
-  color:#fff;
-
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:10px 14px;
-  border:none;
-  border-radius:12px;
-
-  font-weight:900;
-  text-decoration:none;
-
-  box-shadow: 0 6px 16px rgba(31,41,55,.16);
-  transition:
-    background-position .35s ease,
-    transform .06s ease,
-    box-shadow .2s ease,
-    filter .2s ease;
-}
-
-.tw-btn:hover{
-  background-position: 100% 50%;
-  filter: brightness(1.03);
-  transform: translateY(-1px);
-  box-shadow: 0 12px 26px rgba(31,41,55,.22);
-}
-
-.tw-btn:active{
-  transform: translateY(0);
-  filter: brightness(.98);
-  box-shadow: 0 6px 14px rgba(31,41,55,.18);
-}
-
-.tw-btn:focus-visible{
-  outline: none;
-  box-shadow:
-    0 0 0 3px rgba(255,255,255,.9),
-    0 0 0 6px rgba(46,202,195,.45);
-}
-
-
-.tw-btn--sm{
-  padding:6px 10px;
-  border-radius:10px;
-  font-size:14px;
-}
-
-
-.tw-btn[disabled], .tw-btn:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-  transform:none;
-  box-shadow:none;
-  filter:none;
-}
-
-
-@media (prefers-reduced-motion: reduce){
-  .tw-btn{
-    transition: transform .06s ease, box-shadow .2s ease;
-    background-size: 100% 100%;
+    --twg1: var(--g1);
+    --twg2: var(--g2);
+    background-image: linear-gradient(90deg, var(--twg1), var(--twg2));
+    background-size: 200% 100%;        
+    background-position: 0% 50%;
+    color:#fff;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 14px;
+    border:none;
+    border-radius:12px;
+    font-weight:900;
+    text-decoration:none;
+    box-shadow: 0 6px 16px rgba(31,41,55,.16);
+    transition: background-position .35s ease,
+                transform .06s ease,
+                box-shadow .2s ease,
+                filter .2s ease;
   }
-  .tw-btn:hover{ background-position: 0% 50%; }
-}
+  .tw-btn:hover{background-position:100% 50%;filter:brightness(1.03);transform:translateY(-1px);box-shadow:0 12px 26px rgba(31,41,55,.22);}
+  .tw-btn:active{transform:translateY(0);filter:brightness(.98);box-shadow:0 6px 14px rgba(31,41,55,.18);}
+  .tw-btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(255,255,255,.9),0 0 0 6px rgba(46,202,195,.45);}
+  .tw-btn--sm{padding:6px 10px;border-radius:10px;font-size:14px;}
+  .tw-btn[disabled], .tw-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;filter:none;}
+  @media (prefers-reduced-motion: reduce){
+    .tw-btn{transition:transform .06s ease, box-shadow .2s ease;background-size:100% 100%;}
+    .tw-btn:hover{background-position:0% 50%;}
+  }
+
   .tw-card{
-    background:
-      radial-gradient(700px 380px at 110% -10%, var(--bg2), transparent 55%),
-      radial-gradient(700px 380px at -10% 110%, var(--bg1), transparent 55%),
-      var(--card);
+    background: radial-gradient(700px 380px at 110% -10%, var(--bg2), transparent 55%),
+                radial-gradient(700px 380px at -10% 110%, var(--bg1), transparent 55%),
+                var(--card);
     border:1px solid rgba(31,41,55,.08);
-    border-radius:18px;padding:16px;
+    border-radius:18px;
+    padding:16px;
     box-shadow:0 10px 26px rgba(17,24,39,.12);
   }
   .tw-card:hover{box-shadow:0 16px 34px rgba(17,24,39,.16)}
 
   .tw-h2{font-size:18px;font-weight:900;margin:0 0 10px;color:#111827}
 
-  .tw-search__form{display:flex;gap:10px;flex-wrap:wrap}
+  .tw-search__form,
+  .tw-tags__form{display:flex;gap:10px;flex-wrap:wrap;width:100%;}
   .tw-input{flex:1;min-width:260px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px}
   .tw-input:focus{outline:none;border-color:#2ECAC3;box-shadow:0 0 0 3px rgba(46,202,195,.25)}
 
-  .tw-tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tw-tags{display:flex;flex-wrap:wrap;gap:8px;width:100%;}
   .tw-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #e5e7eb;background:#f3f4f6;color:#0f172a;border-radius:999px;padding:6px 10px;font-size:14px;cursor:pointer;user-select:none}
   .tw-chip input{margin-right:2px}
   .tw-chip.is-active{background:#fff;box-shadow:inset 0 0 0 2px rgba(46,202,195,.35)}
-  .tw-filter{margin-top:12px}
+  .tw-filter{margin-top:12px;width:100%;}
   .tw-filter__actions{margin-top:10px}
 
   .tw-selected{display:flex;gap:8px;flex-wrap:wrap;margin:10px 2px}
@@ -271,8 +236,10 @@
   .tw-list-head{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 2px 6px}
   .tw-hint{color:var(--muted);font-size:13px}
 
-  .tw-grid{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
-  .tw-item{min-width:0}
+  .tw-grid {list-style: none;margin: 12px 0 0;padding: 0;display: flex;  flex-direction: column;gap: 14px;}
+
+.tw-item {width: 100%;max-width: none;margin: 0 auto;}
+
 
   .tw-tweet{position:relative;transition:transform .06s, box-shadow .2s}
   .tw-tweet:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(17,24,39,.18)}
@@ -296,10 +263,9 @@
   .tw-like__btn.is-liked{border-color:#fca5a5;color:#dc2626}
   .tw-badge{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 8px;border-radius:999px;background:#111827;color:#fff;font-weight:900;font-size:12px}
 
-  .tw-empty{background:
-      radial-gradient(700px 380px at 110% -10%, var(--bg2), transparent 55%),
-      radial-gradient(700px 380px at -10% 110%, var(--bg1), transparent 55%),
-      #fff;
+  .tw-empty{background: radial-gradient(700px 380px at 110% -10%, var(--bg2), transparent 55%),
+                        radial-gradient(700px 380px at -10% 110%, var(--bg1), transparent 55%),
+                        #fff;
     border:1px dashed #e5e7eb;border-radius:18px;padding:24px;text-align:center;color:#64748b;box-shadow:0 10px 26px rgba(17,24,39,.12)}
   .tw-empty__actions{display:flex;gap:10px;justify-content:center;margin-top:10px}
 

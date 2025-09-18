@@ -1,58 +1,166 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h2 class="auth-title">プロフィール編集</h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "users/shared/error_messages", resource: resource %>
-　
-　<div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name, autofocus: true, autocomplete: "name" %>
-  </div>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "auth-form" }) do |f| %>
+      <%= render "users/shared/error_messages", resource: resource %>
 
-     <div class="field">
-         <%= f.label :image %>
-         <%= f.file_field :image %>
-       </div>
-  
-  <div class="field">
-    <%= f.label :profile %><br />
-    <%= f.text_area :profile, autofocus: true %>
-  </div>
-  
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+      <div class="auth-field">
+        <%= f.label :name, "ユーザー名", class: "auth-label" %>
+        <%= f.text_field :name, autofocus: true, autocomplete: "name", class: "auth-input" %>
+      </div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+      <div class="auth-field">
+        <%= f.label :image, "プロフィール画像", class: "auth-label" %>
+        <%= f.file_field :image, class: "auth-input" %>
+      </div>
 
-  <div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
+      <div class="auth-field">
+        <%= f.label :profile, "自己紹介", class: "auth-label" %>
+        <%= f.text_area :profile, rows: 4, class: "auth-input" %>
+      </div>
+
+      <div class="auth-field">
+        <%= f.label :email, "メールアドレス", class: "auth-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "auth-input" %>
+      </div>
+
+      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+        <div class="auth-hint">現在確認待ち: <%= resource.unconfirmed_email %></div>
+      <% end %>
+
+      <div class="auth-field">
+        <%= f.label :password, "新しいパスワード", class: "auth-label" %>
+        <span class="auth-hint">（空欄のままなら変更されません）</span>
+        <%= f.password_field :password, autocomplete: "new-password", class: "auth-input" %>
+        <% if @minimum_password_length %>
+          <span class="auth-hint">※<%= @minimum_password_length %>文字以上</span>
+        <% end %>
+      </div>
+
+      <div class="auth-field">
+        <%= f.label :password_confirmation, "パスワード（確認用）", class: "auth-label" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "auth-input" %>
+      </div>
+
+      <div class="auth-field">
+        <%= f.label :current_password, "現在のパスワード", class: "auth-label" %>
+        <span class="auth-hint">（変更を保存するために必要です）</span>
+        <%= f.password_field :current_password, autocomplete: "current-password", class: "auth-input" %>
+      </div>
+
+      <div class="auth-actions">
+        <%= f.submit "更新する", class: "tw-btn" %>
+      </div>
     <% end %>
+
+    <div class="auth-divider"></div>
+
+    <h3 class="auth-subtitle">アカウント削除</h3>
+    <p class="auth-hint">本当に削除しますか？</p>
+    <div class="auth-actions">
+      <%= button_to "アカウントを削除する", registration_path(resource_name),
+          method: :delete,
+          data: { confirm: "本当に削除しますか？", turbo_confirm: "本当に削除しますか？" },
+          class: "tw-btn tw-btn--danger" %>
+    </div>
+
+    <div class="auth-links">
+      <%= link_to "戻る", root_path, class: "tw-link" %>
+    </div>
   </div>
+</div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+<style>
+  .auth-wrap {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 0 16px;
+  }
 
-  <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
+  .auth-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 10px 26px rgba(17,24,39,.12);
+    border: 1px solid rgba(31,41,55,.08);
+  }
 
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
+  .auth-title {
+    margin: 0 0 24px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 26px;
+    background: linear-gradient(90deg,var(--g1),var(--g2) 70%,var(--g3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 
-<h3>Cancel my account</h3>
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
 
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
+  .auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
-<%= link_to "Back", :back %>
+  .auth-label {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  .auth-input {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 15px;
+  }
+
+  .auth-input:focus {
+    outline: none;
+    border-color: var(--g1);
+    box-shadow: 0 0 0 3px rgba(46,202,195,.25);
+  }
+
+  .auth-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .auth-actions {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .auth-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 30px 0;
+  }
+
+  .auth-subtitle {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-align: center;
+    color: #dc2626;
+  }
+
+  .tw-btn--danger {
+    background: #ef4444 !important;
+    background-image: none !important;
+  }
+
+  .auth-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+  }
+</style>

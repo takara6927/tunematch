@@ -1,16 +1,109 @@
-<h2>Resend confirmation instructions</h2>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h2 class="auth-title">確認メールを再送する</h2>
+    <p class="auth-subtext">登録したメールアドレスを入力してください。確認メールを再送します。</p>
 
-<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "users/shared/error_messages", resource: resource %>
+    <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post, class: "auth-form" }) do |f| %>
+      <%= render "users/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+      <div class="auth-field">
+        <%= f.label :email, "メールアドレス", class: "auth-label" %>
+        <%= f.email_field :email,
+                          autofocus: true,
+                          autocomplete: "email",
+                          value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email),
+                          class: "auth-input" %>
+      </div>
+
+      <div class="auth-actions">
+        <%= f.submit "確認メールを再送", class: "auth-btn" %>
+      </div>
+    <% end %>
+
+    <div class="auth-links">
+      <%= render "users/shared/links" %>
+    </div>
   </div>
+</div>
 
-  <div class="actions">
-    <%= f.submit "Resend confirmation instructions" %>
-  </div>
-<% end %>
+<style>
+  .auth-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px;
+  }
 
-<%= render "users/shared/links" %>
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 10px 26px rgba(17, 24, 39, .12);
+  }
+
+  .auth-title {
+    font-size: 22px;
+    font-weight: 900;
+    margin: 0 0 8px;
+    background: linear-gradient(90deg, #2ECAC3, #FF8A3D 70%, #F6D24D);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-align: center;
+  }
+
+  .auth-subtext {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0 0 20px;
+    text-align: center;
+  }
+
+  .auth-form { display: flex; flex-direction: column; gap: 16px; }
+
+  .auth-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .auth-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+  }
+
+  .auth-input:focus {
+    outline: none;
+    border-color: #2ECAC3;
+    box-shadow: 0 0 0 3px rgba(46,202,195,.25);
+  }
+
+  .auth-actions { margin-top: 12px; }
+  .auth-btn {
+    width: 100%;
+    padding: 12px;
+    font-weight: 900;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #2ECAC3, #FF8A3D);
+    color: #fff;
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .2s ease;
+  }
+  .auth-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(31,41,55,.18);
+  }
+
+  .auth-links {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 14px;
+  }
+</style>
