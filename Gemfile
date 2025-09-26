@@ -55,3 +55,7 @@ group :production do
 end
 
 gem "cssbundling-rails", "~> 1.4"
+
+gem "cloudinary", "~> 2.4"
+gem "activestorage-cloudinary-service", "~> 0.2.3"
+gem "image_processing", "~> 1.14"
