@@ -30,4 +30,8 @@ def show
                   .group("tags.name").order(Arel.sql("COUNT(*) DESC"))
                   .limit(10).count
 end
+private
+def user_params
+  params.require(:user).permit(:name, :profile, :image)
+end
 end

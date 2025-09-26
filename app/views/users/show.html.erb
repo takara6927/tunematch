@@ -2,11 +2,13 @@
 
   <header class="u-show__hero card">
     <div class="u-show__avatar">
-      <% if @user.image&.attached? %>
-        <%= image_tag @user.image, class: "u-show__avatar-img", alt: @user.name %>
-      <% else %>
-        <div class="u-show__avatar-fallback"><%= @user.name.to_s.first&.upcase || "U" %></div>
-      <% end %>
+    <% if @user.image.attached? %>
+    <%= image_tag @user.image.variant(resize_to_fill: [128, 128]).processed,
+      class: "u-show_avatar-img", alt: @user.name %>
+    <% else %>
+    <div class="u-show_avatar-fallback"><%= @user.name.to_s.first&.upcase || "U" %></div>
+<% end %>
+
     </div>
 
     <div class="u-show__head">
